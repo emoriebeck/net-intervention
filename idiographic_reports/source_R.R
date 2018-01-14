@@ -16,7 +16,7 @@ wd <- "/Volumes/beck/IPCS"
 files <- list.files(wd)
 
 load(sprintf("%s/clean data/clean_data_2017-10-29.RData", wd))
-codebook <- readxl::read_xlsx("~/Box Sync/network/interventions study/ESM_items.xlsx", sheet = "codebook")
+codebook <- readxl::read_xlsx("~/Box Sync/network/other projects/interventions study/ESM_items.xlsx", sheet = "codebook")
 
 BFI.wide <- BFI %>% filter(!is.na(item)) %>%  
   select(-trial_index, -trait, -facet, -answer) %>%
