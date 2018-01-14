@@ -1,0 +1,1139 @@
+---
+title: "`r subs[i]` Results"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: scroll
+    theme: united
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, results = 'hide', fig.align = 'center', eval = T)
+```
+
+```{r, fig.height=11, fig.width=9, fig.show='hide'}
+DS8.wide.i <- DS8.i %>% filter(!is.na(item)) %>% 
+  select(-trial_index, -trait, -facet, -answer) %>%
+  spread(key = item, value = responses2) %>%
+  mutate_at(vars(D1:D8), funs(as.numeric)) %>%
+  arrange(Date, Hour, Minute) %>%
+  mutate(all_beeps = seq(1,n(),1)) %>%
+  select(-type, -Date, -Hour, -Minute)
+
+emo.wide.i <- emo.i %>% filter(!is.na(item)) %>% 
+  select(-trial_index, -trait, -facet, -answer) %>%
+  spread(key = item, value = responses2) %>%
+  mutate_at(vars(E_afraid:E_tired), funs(as.numeric)) %>%
+  arrange(Date, Hour, Minute) %>%
+  mutate(all_beeps = seq(1,n(),1)) %>%
+  select(-type, -Date, -Hour, -Minute)
+
+BFI.wide.i <- unique(BFI.mi.i) %>% 
+  ungroup() %>%
+  arrange(all_beeps)
+
+sit.wide.i <- unique(sit.i %>% filter(!is.na(item)) %>%
+  select(-trial_index, -item, -facet, -answer)) %>%
+  rename(item = trait) %>%
+  group_by(item, type, SID, Date, Hour, Minute) %>% 
+  summarize(responses2 = mean(as.numeric(responses2))) %>%
+  ungroup() %>%
+  spread(key = item, value = responses2) %>%
+  mutate_at(vars(AnxSWk:TV), funs(as.numeric)) %>%
+  arrange(Date, Hour, Minute) %>%
+  mutate(all_beeps = seq(1,n(),1)) %>%
+  select(-type, -Date, -Hour, -Minute)
+
+all.dat.wide <- BFI.wide.i %>%
+  full_join(emo.wide.i) %>%
+  full_join(DS8.wide.i) %>%
+  full_join(sit.wide.i)
+
+
+gVAR_fun <- function(df, model){
+  gamma <- 0
+  lambda <- .025#seq(.025, .25, .025)
+  x <- df[,colnames(df) %in% c(colnames(BFI.wide.i)[3:17], model)]
+  fit <-
+    graphicalVAR(x, gamma = gamma, maxit.in = 1000, maxit.out = 1000,
+                      lambda_beta = lambda, lambda_kappa = lambda, 
+                      verbose = T, scale = F, centerWithin = F, 
+                      deleteMissings = T)
+}
+
+
+gVAR <- tibble(SID = rep(i,3), 
+               model = c("null", "AnxSWk", "E_sad"),
+               data = list(all.dat.wide)) %>%
+  mutate(fit = map2(data, model, gVAR_fun))
+
+temp_fun <- function(fit, SID){
+  PDC <- fit$PDC
+  from <- row.names(PDC)
+  PDC.long <- tbl_df(PDC) %>%
+    mutate(from = from, type = "Temporal") %>%
+    gather(key = to, value = weight, -from, -type)
+}
+
+contemp_mat_fun <- function(fit){fit$PCC}
+
+contemp_long_fun <- function(fit){
+  PCC <- fit$PCC
+  PCC <- PCC[,order(colnames(PCC))]
+  PCC <- PCC[order(rownames(PCC)),]
+  PCC[lower.tri(PCC, diag = T)] <- NA
+  vars <- rownames(PCC)
+  PCC.long <- tbl_df(PCC) %>%
+    mutate(Var1 = vars,
+           type = "Contemporaneous") %>%
+    gather(key = Var2, value = weight, -Var1, -type) %>%
+    filter(!is.na(weight)) %>%
+    unite(var, Var1, Var2, sep = ".", remove = F)
+}
+
+centrality_fun <- function(x){
+  centrality_auto(x)$node.centrality %>%
+    data.frame() %>%
+    mutate(var = rownames(.))
+}
+
+gVAR <- gVAR %>%
+  mutate(temp = map2(fit, SID, temp_fun),
+         contemp_mat = map(fit, contemp_mat_fun),
+         contemp = map(fit, contemp_long_fun),
+         centrality = map(contemp_mat, centrality_fun))
+
+condition <- (gVAR %>%
+  unnest(centrality) %>%
+  filter(var %in% c("E_sad", "AnxSWk")) %>%
+  mutate(rank = dense_rank(Strength)) %>%
+  mutate(var = mapvalues(var, c("E_sad", "AnxSWk"), 
+         c("Loneliness", "Procrastination"))) %>%
+  filter(rank == 1))$var
+
+edge_colors <- RColorBrewer::brewer.pal(8, "Purples")[c(2,4,6,8)]
+idio_plot_fun <- function(data, subject, type, model){
+  if(type == "Temporal"){data_mod <- data$PDC}
+  else{data_mod <- data$PCC}
+  b5_groups <- list(A = c(1:3), E = c(4:6), C = c(7:9), N = c(10:12))
+  plot <- 
+    qgraph(data_mod, layout = "spring", loop = .7, node.width = 1.85, edge.width = 1, esize = 7,
+           title = sprintf("%s Model %s for S%s", model, type, subject), label.font = 2, repulsion = .8, 
+                   label.fill.vertical = 1, label.fill.horizontal = 1, edge.color = "black",
+                   groups = b5_groups, color = rev(t(RColorBrewer::brewer.pal(9, "Purples")[seq(1,9,2)])),
+                   legend = F, DoNotPlot = TRUE, mar = c(4,4,4,4), asize = 5)
+  #change lines to dashed
+  plot$graphAttributes$Edges$lty[plot$Edgelist$weight < 0] <- 2
+  #change line colors
+  plot$graphAttributes$Edges$color <-
+    ifelse(abs(plot$Edgelist$weight) <.1, edge_colors[1],
+    ifelse(abs(plot$Edgelist$weight) <.2, edge_colors[2], edge_colors[3]))
+  dark_colors <- c("#9E9AC8", "#807DBA", "#6A51A3", "#54278F", "#3F007D")
+  plot$graphAttributes$Nodes$label.color[plot$graphAttributes$Nodes$color %in% dark_colors] <- "white"
+  #change variable names
+  plot$graphAttributes$Nodes$labels <- gsub("_", "\n", names(plot$graphAttributes$Nodes$labels))
+  return(plot)
+}
+
+gVAR <- gVAR %>%
+  mutate(temp_plot = pmap(list(fit, SID, "Temporal", model),
+                          possibly(idio_plot_fun, NA_real_)),
+         contemp_plot = pmap(list(fit, SID, "Contemporaneous", model),
+                          possibly(idio_plot_fun, NA_real_)))
+par(mfrow = c(3,2))
+gVAR %>% mutate(map(temp_plot, plot), map(contemp_plot, plot))
+
+big5 <- tibble(letter = c("E", "A", "C", "N", "O"),
+               trait = c("Extraversion", "Agreeableness",
+                         "Conscientiousness", "Neuroticism", 
+                         "Openness"))
+
+cont.edge <- gVAR %>% unnest(temp) %>%
+  rename(Var1 = from, Var2 = to) %>%
+  full_join(gVAR %>% unnest(contemp) %>%
+              select(-var)) %>%
+  filter(model != "null") %>%
+  filter(Var1 %in% model | Var2 %in% model) %>%
+  filter(Var1 != Var2) %>%
+  mutate(dir = ifelse(type == "Temporal" & Var1 == model, "from", 
+               ifelse(type == "Temporal" & Var2 == model, "to",
+                      "both")),
+         var = ifelse(Var1 == model, Var2, Var1)) %>%
+  separate(var, c("trait", "facet"), remove = F) %>%
+  mutate(trait = mapvalues(trait, big5$letter, big5$trait)) 
+```
+
+
+Home {data-orientation=rows}
+=======================================================================
+
+Row 
+-----------------------------------------------------------------------
+
+```{r}
+
+BFI.i <- unique(BFI.i %>% filter(!is.na(item)) %>% 
+  select(-trial_index, -trait, -facet, -answer) %>%
+  spread(key = item, value = responses2) %>%
+  mutate_at(vars(A1:O9), funs(as.numeric)) %>% 
+  arrange(Date, Hour) %>% 
+  mutate(all_beeps = seq(1, n(), 1)) %>%
+  group_by(Date) %>%
+  mutate(beep = seq(1, n(), 1)) %>%
+  gather(key = item, value = value, A1:O9, na.rm = T) %>%
+  full_join(BFI.i %>% filter(!is.na(item)) %>% 
+              select(SID, Hour, Minute, item, facet, trait)))
+
+jitter_fun <- function(df){
+  sd_fun <- function(x){if(sd(x, na.rm = T) == 0) jitter(x, amount = runif(1,0,.05)) else x}
+  df2 <- data.frame(apply(df, 2, sd_fun))
+  colnames(df2) <- colnames(df2)
+  return(df2)
+}
+
+f.BFI.i <- BFI.i %>% 
+  group_by(item) %>%
+  mutate(n = sum(!is.na(value))) %>%
+  filter(n > 1) %>% dplyr::select(-n) %>%
+  spread(key = item, value = value) %>%
+  group_by(SID) #%>% 
+  # nest() %>%
+  # mutate(data2 = map(data, jitter_fun)) %>%
+  # unnest(data2, .drop = T) 
+  #dplyr::select(-SID, -all_beep) %>%
+  #iVAR(., ny = ncol(.), nt = nrow(.), nwin = 1, npol = 0)
+# data.frame(unclass(f.BFI.i)) %>%
+#   amelia(., m = 5, ts = "all_beep", cs = "SID")
+# 
+# example = read.table("http://www.weebly.com/uploads/4/9/7/3/4973696/example.txt", sep= " ", header=T)
+# imputed = iVAR(example, 2, 480, 240, 0)$V
+
+rev.code <- paste(rep(c("E", "A", "C", "N", "O"), each = 6),
+                  rep(c(3,4,7,8,11,12), times = 5), sep = "")
+
+plot_fun <- function(df, trait){
+  df %>%
+    mutate(trait = toupper(trait),
+           facet = str_wrap(facet, 10)) %>%
+    ggplot(aes(x = all_beeps, y = value, color = facet)) +
+      geom_line() + 
+      facet_wrap(~trait) +
+      labs(x = NULL, y = NULL, color = NULL) +
+      theme_classic() +
+      theme(legend.position = "bottom",
+            strip.text = element_text(face = "bold", size = rel(1.2)),
+            axis.text = element_text(face = "bold", size = rel(1.2)),
+            legend.text = element_text(face = "bold"))
+}
+
+big5 <- tibble(letter = c("E", "A", "C", "N", "O"),
+               trait = c("Extraversion", "Agreeableness",
+                         "Conscientiousness", "Neuroticism", 
+                         "Openness"))
+
+dat <- BFI.facet %>%
+  gather(key = facet, value = value, -SID, -all_beeps, na.rm = T) %>%
+  separate(facet, c("trait", "facet")) %>%
+  group_by(trait) %>%
+  mutate(z = as.numeric(scale(value))) %>%
+  group_by(SID, trait) %>%
+  summarize(Subject = mean(value, na.rm = T),
+            Subject = ifelse(is.nan(Subject) == T, NA, Subject), 
+            Subject.z = mean(z, na.rm = T),
+            Subject.z = ifelse(is.nan(Subject.z) == T, NA, Subject.z),
+            Subject.p = pnorm(Subject.z)*100) %>%
+  group_by(trait) %>%
+  mutate(Group = mean(Subject, na.rm = T)) %>%
+  ungroup() %>% 
+  filter(SID == subs[i]) %>%
+  mutate(trait = factor(mapvalues(trait, big5$letter, big5$trait),
+                        levels = big5$trait)) %>%
+  gather(key = source, value = mean, Subject, Group) %>%
+  mutate(mini = floor(min(mean, na.rm = T)), maxi = ceiling(max(mean, na.rm = T))) 
+```
+
+### <span style="font-size:1.25em;"><strong>Extraversion Percentile</strong></span>   
+```{r, results = 'show'}
+gauge(round((dat %>% filter(trait == "Extraversion" & source == "Subject"))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "royalblue"))
+```
+
+### <span style="font-size:1.25em;"><strong>Agreeableness Percentile</strong></span>   
+```{r, results = 'show'}
+gauge(round((dat %>% filter(trait == "Agreeableness" & source == "Subject"))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = c("yellow")))
+```
+
+### <span style="font-size:1.25em;"><strong>Conscientiousness Percentile</strong></span>  
+```{r, results = 'show'}
+gauge(round((dat %>% filter(trait == "Conscientiousness" & source == "Subject"))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "orange"))
+```
+
+### <span style="font-size:1.25em;"><strong>Neuroticism Percentile</strong></span>   
+```{r, results = 'show'}
+gauge(round((dat %>% filter(trait == "Neuroticism" & source == "Subject"))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "green"))
+```
+
+### <span style="font-size:1.25em;"><strong>Openness Percentile</strong></span>   
+```{r, results = 'show'}
+gauge(round((dat %>% filter(trait == "Openness" & source == "Subject"))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "purple"))
+```
+
+Row  
+-----------------------------------------------------------------------
+
+### 
+<p style="color:blue; font-size:200%;"><strong>Welcome to your personalized results</strong></p>  
+
+<!--<p style="font-size:150%;"><strong>Your target behavior is `r condition`</strong></p>  -->
+
+<span style="font-size:1.25em;">This document summarizes your personal results from the two weeks of surveys you completed. Our hope is that (1) this document provides you with some self-insight that you would not get from taking a regular personality quiz and that (2) you can use what you learn to improve your life by reducing your procrastination or loneliness.</span>  
+
+<span style="font-size:1.25em;">Before we dive into your results, though, you should take a minute to learn a little more about the surveys you completed.  In each survey, we asked you to do a number of different things from generating a word related to others to reporting what you were doing. If you'd like to learn more, these are summarized below (Measures).</span>  
+
+<span style="font-size:1.25em;">Once your ready, click the "What's Next" tab to see what you are going to do in the future.</span>  
+
+###
+```{r horiz fig, fig.width=9, fig.height=3}
+
+dat %>%
+  ggplot(aes(x = trait, y = mean, group = source)) +
+    geom_line(aes(color = source, group= source), size = 1.25) +
+    scale_color_manual(values = c("royalblue2", "seagreen3")) +
+    scale_y_continuous(limits = c(unique(dat$mini), unique(dat$maxi)), 
+            breaks = seq(unique(dat$mini), unique(dat$maxi),.5)) +
+    # geom_point() +
+    labs(x = NULL, y = "Composite Rating (1-5)", shape = "Facet Text", color = "Source") +
+    # coord_flip() +
+    # facet_grid(trait~., scales = "free") +
+    theme_classic() +
+      theme(legend.position = "bottom",
+            strip.text = element_text(face = "bold", size = rel(15)),
+            axis.text = element_text(face = "bold", size = rel(1)),
+            axis.text.x = element_text(face = "bold", size = rel(1)),# hjust = 1, angle = 35),
+            axis.title = element_text(face = "bold", size = rel(1)),
+            legend.text = element_text(face = "bold", size = rel(1.2)),
+            legend.key.size = unit(.3, "cm"))
+```
+
+
+Row   {.tabset data-height=400}  
+-----------------------------------------------------------------------
+
+### <span style="font-size:1.75em;">What's Next?</span>  
+<span style="font-size:1.25em;">The next step is to review your responses from the surveys you took, so you can use them to improve your life.</span>  
+
+```{r, results='asis'}
+if(condition == "Procrastination"){
+  cat('<span style="font-size:1.25em;">Based on your responses and results, we are going to help you to target your procrastination, so you feel more productive and reliable. In this document, we will point out a great number of associations between your behavior and your reports of procrastination.</span> \n\n  ')
+} else{
+  cat('<span style="font-size:1.25em;">Based on your responses and results, we are going to help you to target feelings of and loneliness, so you feel more connected and calm. In this document, we will point out a great number of associations between your behavior and your reports of loneliness.</span> \n\n  ')
+}
+```
+
+<span style="font-size:1.25em;">As you go through your results, we challenge you to (1) think about things that do or do not surprise you and to (2) think about strategies you can use to tackle these. We will provide you with a set of recommended strategies based on your personality, but ultimately, the strategies you use should be tailored to your goals and desires.</span>  
+
+<span style="font-size:1.25em;"><strong>This document procedes in 4 parts:</strong></span>   
+
+```{r, results='asis'}
+
+cat('<span style="font-size:1.25em;">1. First, we provide you with a broad overview of your personality relative to others in the study.</span>  \n   
+<span style="font-size:1.25em;">2. Then we provide you with a snapshot of your month in terms of the events you encountered and the emotions your reported while experiencing those events.</span>  \n  ')
+
+if(condition == "Procrastination"){
+  cat('<span style="font-size:1.25em;">3. Then we look at specific patterns of behaviors that were related to your procrastination.  \n  4. Finally, we provide you with a set of tailored strategies based on your personality that will help you to target your procrastination.</span>  \n\n  ' )
+} else {
+  cat('<span style="font-size:1.25em;">3. Then we look at specific patterns of behaviors that were related to your loneliness.  \n  4. Finally, we provide you with a set of tailored strategies based on your personality that will help you to target your loneliness.</span>  \n\n  ' )
+}
+```
+
+
+<span style="font-size:1.25em;">As you move into the next phase of this study, we invite you to refer back to this document frequently for guidance.</span>  
+
+### <span style="font-size:1.75em;">Measures</span>  
+
+```{r, results ='asis'}
+tribble(
+  ~num, ~meas, ~desc,
+1, "**Remote Associates Test**:", 'The first task is called the Remote Associates Test (RAT). In this test, you are given three words, like "swiss / cottage / cake" and asked to generated a 4th word related to those 3, like "cheese." This test is meant to be a test of creativity and insight.' ,
+2, "**Personality and Emotions**:", 'Second, we asked you to respond to a subset of 10 personality items from a larger subset of 60 from the Big 5 Inventory 2 (BFI-2; see the Overview page for more details on the prompts you responded to) as well as prompts about your emotions. We can break the personality items down into what we call scales. By that, we mean that we asked you different questions that were similar and can combine them. This allows us to get a little bit better measure of your personality.  ',
+3, "**(Psychological) Situations**:", 'Third, you responded to eight items that represent the so-called DIAMONDs model of situations. The idea behind this model is that we can break down the "objective" situations we encounter (e.g. in class, at home, at work, etc.) into *psychological* components. What this means is that we interpret some seemingly different situations as similar, so we need a way to captures this. The DIAMONDs model includes **D**uty, **I**ntellect, **A**dversity, **M**ating, p**O**sitivity, **N**egativity, and **D**eception. Together research has demonstrated that these appraisals (or perceptions) of your situations capture what is shared or different among them.  ',
+4, "**Common Situations**:", 'Fourth, we had you check off things that had just happened to you like feeling tired, doing schoolwork, or surfing the web. We asked you these, so you could get a realistic sample of how you actually spend your time. Looking at this might give you insight into things you wish you did more or less, which might help you improve your life.  ',
+5, "**Memory**:", 'Fifth, sometimes, but not always, we asked you to remember words from the RAT. We did this in the hopes that we might be able to help you better understand times when your memory is more alert and attuned than others (e.g. you tend to be very tired at night and your memory suffers).  '
+) %>%
+  kable(., "html", col.names = c("", "", "Description")) %>%
+  kable_styling(bootstrap_options = c("striped","repeat_header")) %>%
+  scroll_box(height = "400px") 
+```
+
+Overview {data-orientation=columns}
+=======================================================================
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+### <span style="font-size:1.75em;">Summary</span>   
+
+<span style="font-size:1.5em;">Below you see a summary of your personality. On the left, you see a graph of your personality relative to other people in the study. The green line represents you while the blue line represents everyone else. On the right you see a list of items you responded to during the study that were used to calculate the values you see on the left.</span>  
+
+
+### <span style="font-size:1.75em;">Descriptions</span>  
+
+```{r, results = 'asis'}
+tribble(
+  ~num, ~trait, ~desc, 
+  1, "**Extraversion:**", 'Extraverison has gained considerable attention in popular media as the difference between people who like to spend time with lots of others and those who would rather hang out at home with a cat and a book. But Extraversion is also about energy and activitiy levels as well dominance and positive emotions. Extraverted people be happier and to have more friends, but they may also be the risk-takers.  ',
+2, "**Agreeableness:**", 'Agreeableness is often thought of as the trait of compliance. Although Agreeable people do tend to avoid conflict, but they also tend to be warmer, more empathetic, and more positive than others. Agreeableness is also the trait of trusting others and being trusted, which is why it gets a rep as the push-over trait. Despite this, though, Agreeableness is associated with many positive things, such as .  ',
+3, "**Conscientiousness:**", "Conscientiousness often aligns with characteristics typically thought of as Type A. Conscientious people make plans and stick to them. They are organized and think things through. They are reliable, productive, and hardworking. However, they can also be rigid and seem robotoc. On the flip side, unconscientious people are disorganized and scattered. It's not wonder, then, that Conscientious people perform better in work and school. They also tend to have better health, likely because they engage in routine behaviors that benefit their health.  ",
+4, "**Emotional Stability (Neuroticism):**", "Emotional Stability is somewhat like it sounds. Emotionally stable people are able to regulate (and not just repress) their emotions. They seem relaxed and their emotions are not easily swayed by small misfortunes. People low in Emotional Stability may have emotions that are balanced on the edge of a knife. One minute they are fine, and the next they are far from it. They may also get 'stuck' in their emotions, particularly negative ones. When they become sad, it might take them a long time to get back. People low in Emotional Stability are vulnerable to depression and anxiety disorders and tend to have poorer health than others.  ",
+5, "**Openness:**", "Openness is the sort of the hipster trait. People who are high in Openness tend to be intelligent, curious, open-minded, and politically liberal. They are willing to try anything and have flexibility of thought. Open people also tend to be creative and prone to fantasy. They tend to enjoy art and aesthetics, from poetry and music to theater and art. You might find them to be the day-dreamers. People low in Openness tend to be rigid and stuck in their ways. Openness is associated with educational attainment and .  "
+) %>%
+  kable(., "html", col.names = c("", "", "Description")) %>%
+  kable_styling(bootstrap_options = c("striped","repeat_header")) %>%
+  scroll_box(height = "600px") 
+```
+
+Column {.tabset data-width=300}
+-----------------------------------------------------------------------
+
+### <span style="font-size:1.75em;">Personality Profile</span>  
+
+```{r, , fig.width=4, fig.height=8}
+facet.dat <- BFI.facet %>%
+  gather(key = facet, value = value, -SID, -all_beeps, na.rm = T) %>%
+  group_by(facet) %>%
+  mutate(z = as.numeric(scale(value))) %>%
+  group_by(SID, facet) %>%
+  summarize(Subject = mean(value, na.rm = T),
+            Subject = ifelse(is.nan(Subject) == T, NA, Subject), 
+            Subject.z = mean(z, na.rm = T),
+            Subject.z = ifelse(is.nan(Subject.z) == T, NA, Subject.z),
+            Subject.p = pnorm(Subject.z)*100) %>%
+  separate(facet, c("trait", "facet")) %>%
+  group_by(trait, facet) %>%
+  mutate(Group = mean(Subject, na.rm = T)) %>%
+  ungroup() %>% 
+  filter(SID == subs[i]) %>%
+  mutate(trait = factor(mapvalues(trait, big5$letter, big5$trait),
+                        levels = big5$trait)) %>%
+  gather(key = source, value = mean, Subject, Group) %>% 
+  mutate(bottom_rank = dense_rank(Subject.p), 
+         top_rank = dense_rank(desc(Subject.p)))
+facet.dat %>%
+  ggplot(aes(x = facet, y = mean, group = source)) +
+    geom_line(aes(color = source), size = 1.5) +
+    scale_color_manual(values = c("blue", "green4")) +
+    scale_y_continuous(limits = c(1,3), breaks = seq(1,3,1)) +
+    geom_point() +
+    labs(x = NULL, y = "Composite Rating (1-5)", shape = "Facet Text", color = "Source") +
+    coord_flip() +
+    facet_grid(trait~., scales = "free") +
+    theme_classic() +
+      theme(legend.position = "bottom",
+            strip.text = element_text(face = "bold", size = rel(.8)),
+            axis.text = element_text(face = "bold", size = rel(1)),
+            axis.title = element_text(face = "bold", size = rel(1)),
+            legend.text = element_text(face = "bold", size = rel(.7)),
+            legend.key.size = unit(.3, "cm"))
+    
+
+#  BFI.i %>%
+#   mutate(value = ifelse(item %in% rev.code, reverse.code(-1, value, mini = 1, maxi = 5), value)) %>%
+#   group_by(type, trait, facet, SID, Date, Hour, Minute, all_beeps, beep) %>%
+#   summarize(value = mean(value, na.rm = T),
+#             value = ifelse(is.nan(value) == T, NA, value)) %>%
+#    ungroup() %>%
+#     mutate(trait = toupper(trait)) %>%
+#     ggplot(aes(x = all_beeps, y = value, color = facet)) +
+#       geom_line() + 
+#       facet_wrap(~trait) +
+#       labs(x = NULL, y = NULL, color = NULL) +
+#       theme_classic() +
+#       theme(legend.position = c(.85,.25),
+#             strip.text = element_text(face = "bold", size = rel(1.2)),
+#             axis.text = element_text(face = "bold", size = rel(1.2)),
+#             legend.text = element_text(face = "bold", size = rel(.5)),
+#             legend.key.size = unit(.3, "cm"))
+# 
+# plots <- BFI.plot$g
+# do.call("grid.arrange", plots)
+```
+
+### <span style="font-size:1.75em;">Items</span>   
+
+```{r, results = 'asis'}
+codebook %>% 
+  filter(type == "BFI-2") %>%
+  select(Trait, Facet, ItemText) %>%
+  kable(., "html", booktabs = T) %>%
+  kable_styling(bootstrap_options = c("striped","repeat_header")) %>%
+  collapse_rows(columns = 1:2) %>%
+  scroll_box(height = "800px") 
+```  
+
+Column {data-width=150}
+-----------------------------------------------------------------------
+
+```{r}
+top1 <- (facet.dat %>% filter(top_rank == 1 & source == "Subject"))$facet
+top2 <- (facet.dat %>% filter(top_rank == 2 & source == "Subject"))$facet
+bottom1 <- (facet.dat %>% filter(bottom_rank == 1 & source == "Subject"))$facet
+bottom2 <- (facet.dat %>% filter(bottom_rank == 2 & source == "Subject"))$facet
+```
+
+### <span style="font-size:1.25em;">Top Percentile #1: `r top1`</span>  
+```{r, results = 'show'}
+gauge(round((facet.dat %>% filter(facet == top1[1]))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "royalblue"))
+```
+
+### <span style="font-size:1.25em;">Top Percentile #2: `r top2`</span>    
+```{r, results = 'show'}
+gauge(round((facet.dat %>% filter(facet == top2[1]))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "royalblue"))
+```
+
+### <span style="font-size:1.25em;">Bottom Percentile #1: `r bottom1`</span>  
+```{r, results = 'show'}
+gauge(round((facet.dat %>% filter(facet == bottom1[1]))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "red"))
+```
+
+### <span style="font-size:1.25em;">Bottom Percentile #2: `r bottom2`</span>   
+```{r, results = 'show'}
+gauge(round((facet.dat %>% filter(facet == bottom2[1]))$Subject.p,0), 
+      min = 0, max = 100, symbol = '%', gaugeSectors(colors = "red"))
+```
+
+
+Summary of Your Month {data-orientation=rows}
+=======================================================================
+
+Row 
+-----------------------------------------------------------------------
+
+```{r}
+
+
+sit.freq <- sit.wide.i %>%
+  gather(key = Trait, value = value, -SID, -all_beeps) %>%
+  full_join(codebook %>% filter(type == "sit") %>% select(Trait, ItemText)) %>%
+  group_by(SID, Trait, ItemText) %>%
+  summarize(n = sum(value, na.rm = T))
+
+top2.sit <- sit.freq %>%
+  arrange(desc(n)) %>%
+  head(2)
+
+bottom2.sit <- sit.freq %>%
+  filter(n!=0) %>%
+  arrange(n) %>%
+  head(2)
+```
+
+### Procrastination Frequency  
+```{r, results = 'asis'}
+valueBox((sit.freq %>% filter(Trait == "AnxSWk"))$n, icon = "fa-pencil")
+```
+
+### Loneliness Frequency  
+```{r, results = 'asis'}
+valueBox((sit.freq %>% filter(Trait == "argFrnd"))$n, icon = "fa-user")
+```
+
+### Tired Frequency  
+```{r, results = 'asis'}
+valueBox((sit.freq %>% filter(Trait == "tired"))$n, icon = "fa-bed")
+```
+
+Row 
+-----------------------------------------------------------------------
+
+### <span style="font-size:1.75em;">What did you do?</span>    
+
+<span style="font-size:1.25em;">During the study, we asked you to report a subset of things that you did. Below you see how many times you did each of those things. Based on your responses, you most frequently reported "yes" to the two following prompts: "`r top2.sit$ItemText[1]`" and "`r top2.sit$ItemText[2]`." Your most frequently reported "no" behaviors were "`r bottom2.sit$ItemText[1]`" and "`r bottom2.sit$ItemText[2]`." Are there any that surprise you?</span>  
+
+### <span style="font-size:1.75em;">How did you feel?</span>  
+<span style="font-size:1.25em;">Another question to ask is how different events impacted your emotions. Here you see a few events that did not happen to you frequently as well as your emotions when you reported them. Do you see any notable ups or downs that occur with these events.</span>  
+
+Row 
+-----------------------------------------------------------------------
+
+###  
+
+```{r}
+# codebook %>% filter(type == "sit")
+
+## left off here ##
+
+item.levs <- (sit.freq %>% arrange(desc(n)))$Trait
+text.levs <- (sit.freq %>% arrange(desc(n)))$ItemText
+
+sit.wide.i %>%
+  gather(key = Trait, value = value, -SID, -all_beeps) %>%
+  full_join(codebook %>% filter(type == "sit") %>% select(Trait, ItemText)) %>%
+  mutate(Trait = factor(Trait, levels = item.levs),
+         ItemText = factor(ItemText, levels = text.levs)) %>%
+  group_by(SID, Trait, ItemText) %>%
+  summarize(Frequency = sum(value, na.rm = T)) %>%
+  ggplot(aes(x = ItemText, y = Frequency, fill = ItemText)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(x = NULL) +
+    coord_flip() +
+    theme_classic() +
+    theme(legend.position = "none",
+          axis.text = element_text(face = "bold", size = rel(1)),
+          axis.title = element_text(face = "bold", size = rel(1)))
+```
+
+###  
+
+```{r}
+events <- (sit.wide.i %>%
+  gather(key = Trait, value = value, -SID, -all_beeps) %>%
+  full_join(codebook %>% filter(type == "sit") %>% select(Trait, ItemText)) %>%
+  filter(value != 0) %>%
+  mutate(Trait = forcats::fct_infreq(Trait),
+         ItemText = forcats::fct_infreq(ItemText)) %>%
+  group_by(SID, Trait, ItemText) %>%
+  summarize(Frequency = sum(value, na.rm = T)) %>%
+  filter(Frequency %in% 2:3))$Trait
+
+emo.sit.i <- unique(emo.i %>% 
+  select(SID, item,responses2, Date:Minute) %>%
+  mutate(responses2 = as.numeric(responses2)) %>%
+  full_join(unique(sit.i %>% filter(!is.na(item)) %>%
+  select(-trial_index, -item, -type, -facet, -answer)) %>%
+  rename(item = trait) %>%
+  mutate(item = paste("S", item, sep = "_")) %>%
+  group_by(item, SID, Date, Hour, Minute) %>% 
+  summarize(responses2 = mean(as.numeric(responses2))) %>%
+  ungroup() )) %>%
+  filter(!is.na(item)) %>%
+  spread(key = item, value = responses2) %>%
+  mutate_at(vars(E_afraid:S_TV), funs(as.numeric)) %>% 
+  arrange(Date, Hour) %>% 
+  mutate(all_beeps = seq(1, n(), 1)) %>%
+  group_by(Date) %>%
+  mutate(beep = seq(1, n(), 1)) %>%
+  gather(key = item, value = value, E_afraid:S_TV, na.rm = T)
+
+emo.sit.i %>% filter(grepl("E_",item)) %>%
+  separate(item, c("type", "item")) %>%
+  select(-type) %>%
+  full_join(emo.sit.i %>% filter(grepl("S_",item)) %>%
+  separate(item, c("type", "item")) %>% 
+  filter(item %in% bottom2.sit$Trait & value == 1) %>% 
+  rename(event = item, e.value = value) %>%
+  mutate(xmin = all_beeps - 2, xmax = all_beeps + 2, ymin = 0, ymax = 5) %>%
+  select(-type)) %>%
+  mutate(item = stringr::str_to_title(item)) %>%
+  ggplot(aes(x = all_beeps, y = value)) +
+    geom_rect(data = . %>% filter(!is.na(e.value)),
+      aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = event),
+      alpha = .5) +
+    geom_line() +
+    geom_point(data = . %>% filter(!is.na(e.value)), size = 2) +
+    labs(x = "Study Day", y = "Rating", fill = "Event") +
+    facet_wrap(~item) + 
+    theme_classic() +
+    theme(legend.position = "bottom",
+          axis.text = element_text(face = "bold"), 
+          axis.title = element_text(face = "bold"),
+          strip.text = element_text(face = "bold"))
+```
+
+
+
+Individualized Results {data-orientation=rows}
+=======================================================================
+
+
+```{r}
+file <- "~/Box Sync/network/other projects/interventions study/intervention_strategies.xlsx"
+# shrt_cnd <- ifelse(condition == "Procrastination", "Prcrst", "lonely")
+shrt_cnd <- ifelse(condition == "Procrastination", "AnxSWk", "E_sad")
+strat <- readxl::read_xlsx(file, sheet = "old") %>%
+  filter(model == shrt_cnd)
+
+val_boxes <- cont.edge %>% 
+  filter(type == "Contemporaneous", model == shrt_cnd) %>%
+  mutate(rank = dense_rank(desc(abs(weight)))) %>%
+  filter(rank %in% 1:4) %>%
+  arrange(rank)
+
+summ <- unique(cont.edge %>%
+  left_join(strat %>% 
+    select(model, type, dir, measure, facet, strategy, use)) %>%
+  filter(weight != 0 & use == "Yes") %>%
+  group_by(type, dir, model) %>%
+  mutate(max = dense_rank(desc(weight)),
+         min = dense_rank(weight)) %>%
+    filter(min %in% c(1,2) | max %in% c(1,2)) %>%
+  #filter(weight == max(abs(weight[weight != 0]), na.rm = T) | weight == min(abs(weight[weight != 0]), na.rm = T)) %>%
+  left_join(codebook %>% filter(type == "BFI-2") %>%
+              select(shrtFacet, Facet, Trait) %>%
+              separate(shrtFacet, c("t", "facet")) %>%
+              rename(trait = Trait))) %>%
+  filter(!is.na(measure)) %>%
+  mutate(sign = sign(weight)) %>%
+  filter((sign == 1 & measure == "max") | (sign == -1 & measure == "min")) 
+```
+
+Row 
+-----------------------------------------------------------------------
+###  
+
+```{r, fig.width=10, fig.height=4}
+big5 <- tibble(letter = c("E", "A", "C", "N", "O"),
+               trait = c("Extraversion", "Agreeableness",
+                         "Conscientiousness", "Neuroticism", 
+                         "Openness"))
+
+targets <- gVAR %>% unnest(temp) %>%
+  rename(Var1 = from, Var2 = to) %>%
+  full_join(gVAR %>% unnest(contemp) %>%
+              select(-var)) %>%
+  filter(model != "null") %>%
+  filter(Var1 %in% model | Var2 %in% model) %>%
+  filter(Var1 != Var2) %>%
+  mutate(dir = ifelse(type == "Temporal" & Var1 == model, "from", 
+               ifelse(type == "Temporal" & Var2 == model, "to",
+                      "both")),
+         var = ifelse(Var1 == model, Var2, Var1)) %>%
+  separate(var, c("trait", "facet"), remove = F) %>%
+  mutate(trait = mapvalues(trait, big5$letter, big5$trait))
+
+targets %>%
+  filter(dir == "both") %>%
+  ggplot(aes(x = facet, y = weight, color = model)) +
+    geom_hline(aes(yintercept = 0), linetype = "dashed", size = .5) +
+    geom_line(aes(group = model), size = 1.5) +
+    labs(y = "Relationship Strength (-1 to 1)",
+         x = NULL, color = "Outcome") +
+    # coord_flip() +
+    # facet_wrap(~trait, scale = "free_y", nrow = 3) +
+    facet_grid(.~trait, scale = "free_x") +
+    theme_classic() +
+      theme(legend.position = "bottom", #c(.8,.12),
+            strip.text = element_text(face = "bold", size = rel(1)),
+            axis.text.x = element_text(face = "bold", size = rel(1), angle = 45,
+                                     hjust = 1),
+            axis.text.y = element_text(face = "bold", size = rel(1.2)),
+            # axis.text = element_text(face = "bold", size = rel(1.2)),
+            axis.title = element_text(face = "bold", size = rel(1)),
+            legend.text = element_text(face = "bold", size = rel(.7)),
+            legend.key.size = unit(.3, "cm"))
+```
+
+
+Row 
+-----------------------------------------------------------------------
+
+### 
+
+```{r, results = 'asis'}
+# bullshit code to deal with missingness
+# summ %>% ungroup() %>%
+#   full_join(
+#     expand.grid(model = c("AnxSWk", "E_sad"), 
+#               dir = c("to", "from"),
+#               max = c(1,15), min = c(1,15),
+#               stringsAsFactors = F) %>%
+#   full_join(
+#     expand.grid(model = c("AnxSWk", "E_sad"), 
+#               dir = c("both"),
+#               max = c(1,10), min = c(1,10),
+#               stringsAsFactors = F)
+#   ) %>%
+#     filter(max != min)) %>%
+#   mutate(Facet = ifelse(is.na(Facet) == T, "Depression", Facet))
+
+if (condition == "Procrastination"){
+  cat('<span style="font-size:1.25em;">The chart to the right is meant to help you understand patterns in your behaviors. We are going to talk about three different times of patterns and how they relate to procrastination.</span>\n\n  ', sep = "")
+} else{
+  cat('<span style="font-size:1.25em;">The chart to the right is meant to help you understand patterns in your behaviors. We are going to talk about three different times of patterns and how they relate to loneliness. </span>\n\n  ', sep = "")
+}
+
+cat('<span style="font-size:1.25em;">For each, a positive relationship means an increase in one relates to an increase in another, a negative relationship means that an increase in one relates to a decrease in another, and a zero relationship means two things are independent. Below, there is a description of each of the three kinds of relationships, moving from left to right in the figure:</span>    \n\n  ')
+
+var <- cont.edge %>%
+  left_join(strat %>% 
+    select(model, type, dir, measure, facet, use)) %>%
+  filter(use == "Yes") %>%
+  group_by(type, dir, model) %>%
+  summarize(sd = sd(weight, na.rm = T),
+            min = min(weight, na.rm = T),
+            max = max(weight, na.rm = T))
+
+
+#### Concurrent patterns
+```
+
+###
+
+```{r, results = 'asis'}
+##### 
+if (condition == "Procrastination"){ ##### procrastination condition
+  cat('<span style="font-size:1.75em;"><strong>1. Concurrent:</strong></span>  \n  <span style="font-size:1.25em;">Concurrent patterns mean that two things happen at the same time. This could mean that you are anxious or unreliable *while* you are procrastinating. These are important because they help us to identify things that we experience at the same time, which we often are not aware of.</span>  \n\n  ') 
+  
+  ## contempornaoues procrastination
+  if((var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$sd != 0 & 
+     (var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$min != 0 &
+     (var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$max != 0){
+    facets  <- tolower((summ %>% filter(model == "AnxSWk" & max %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat('<span style="font-size:1.25em;">You procrastinated more when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat( ' and ', facets[2] , sep = "")}
+    facets  <- tolower((summ %>% filter(model == "AnxSWk" & min %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat(' and procrastinated less when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat(' and ', facets[2], sep = "")}
+    cat('.</span>    \n\n', sep = "")
+  } else if((var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$sd != 0 & 
+            (var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$min == 0){
+    facets  <- tolower((summ %>% filter(model == "AnxSWk" & max %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat('<span style="font-size:1.25em;">You procrastinated more when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat( ' and ', facets[2], sep = "" )}
+    cat(' but none of your behaviors were associated with less procrastination.</span>   \n\n  ', sep = "")
+  } else if((var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$sd != 0 & 
+            (var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$max == 0){
+    facets  <- tolower((summ %>% filter(model == "AnxSWk" & min %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat('<span style="font-size:1.25em;">You procrastinated less when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat( ' and ', facets[2] , sep = "")}
+    cat(' but none of your behaviors were associated with more procrastination.</span>   \n\n  ', sep = "")
+  } else{
+    cat('<span style="font-size:1.25em;">Your behaviors were independent of your procrastination -- that is, you did not report any behaviors that tended to also occur while you were procrastinating.</span>  \n\n  ')  
+  }
+} else{ ##### loneliness condition 
+  cat('<span style="font-size:1.75em;"><strong>1. Concurrent:</strong></span>  \n  <span style="font-size:1.25em;">Concurrent patterns mean that two things happen at the same time. This could mean that you are sad or disorganized *while* you are lonely. These are important because they help us to identify things that we experience at the same time, which we often are not aware of.</span>  \n\n  ') 
+  
+  ### contemporanoues loneliness
+  if((var %>% filter(type == "Contemporaneous" & model == "E_sad"))$sd != 0 & 
+     (var %>% filter(type == "Contemporaneous" & model == "E_sad"))$min != 0 & 
+     (var %>% filter(type == "Contemporaneous" & model == "E_sad"))$max != 0){
+  facets  <- tolower((summ %>% filter(model != "AnxSWk" & max %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat('<span style="font-size:1.25em;">You procrastinated more when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat( ' and ', facets[2] , sep = "")}
+    facets  <- tolower((summ %>% filter(model != "AnxSWk" & min %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat(' and procrastinated less when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat(' and ', facets[2], sep = "")}
+    cat('. </span>   \n\n', sep = "")
+  } else if((var %>% filter(type == "Contemporaneous" & model != "AnxSWk"))$sd != 0 & 
+            (var %>% filter(type == "Contemporaneous" & model != "AnxSWk"))$min == 0){
+    facets  <- tolower((summ %>% filter(model != "AnxSWk" & max %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat('<span style="font-size:1.25em;">You procrastinated more when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat( ' and ', facets[2], sep = "" )}
+    cat(' but none of your behaviors were associated with less loneliness.</span>   \n\n  ', sep = "")
+  } else if((var %>% filter(type == "Contemporaneous" & model != "AnxSWk"))$sd != 0 & 
+            (var %>% filter(type == "Contemporaneous" & model != "AnxSWk"))$max == 0){
+    facets  <- tolower((summ %>% filter(model != "AnxSWk" & min %in% c(1,2) & dir == "both"))$Facet)
+    nfacets <- length(facets)
+    cat('<span style="font-size:1.25em;">You procrastinated less when you reported more ', facets[1], sep = "")
+    if (nfacets > 1){cat( ' and ', facets[2] , sep = "")}
+    cat(' but none of your behaviors were associated with more loneliness.</span>   \n\n  ', sep = "")
+   } else{
+  cat('<span style="font-size:1.25em;">For you, we see that your loneliness was independent of your other behaviors -- that is, you did not report any behaviors that tended to also occur while you were lonely.</span>', '\n\n  ', sep = "")  
+   }
+}
+
+
+# #### contingent patterns
+# 
+# if (condition == "Procrastination"){
+# cat('<font size = "4"><strong>2. Contingent:</font></strong>  \n  Contingent patterns mean that one thing tends to follow something else. For example, you might feel more anxious a couple of hours after procrastinating on something. This helps us to recgonize how our targets might influence our behavior. The opposite is also true, so this also helps us to see how our behaviors influence our targets.  \n\n')
+# } else{
+# cat('<font size = "4"><strong>2. Contingent:</font></strong>  \n  Contingent patterns mean that one thing tends to follow something else. For example, you might feel more anxious a couple of hours after feeling lonely. This helps us to recgonize how our targets might influence our behavior. The opposite is also true, so this also helps us to see how our behaviors influence our targets.  \n\n')  
+# }
+# 
+# ##### loneliness "from"
+# if (condition == "Loneliness"){
+#   if((var %>% filter(dir == "from" & model == "E_sad"))$sd != 0 & 
+#      (var %>% filter(dir == "from" & model == "E_sad"))$min != 0 & 
+#      (var %>% filter(dir == "from" & model == "E_sad"))$max != 0){
+#   cat('The middle panel below shows how your targets influence your loneliness ("from"). For you, we see that after you were lonely, you reported more ', tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "from"))$Facet), ' and less ', tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "from"))$Facet), '.', '\n\n  ', sep = "")  
+#   } else if((var %>% filter(dir == "from" & model == "E_sad"))$sd != 0 & 
+#             (var %>% filter(dir == "from" & model == "E_sad"))$min == 0) {
+#     cat('The middle panel below shows how your targets influence your loneliness ("from"). For you, we see that after you were lonely, you reported more ', tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "from"))$Facet), '.', '\n\n  ', sep = "")  
+#   } else if((var %>% filter(dir == "from" & model == "E_sad"))$sd != 0 & 
+#             (var %>% filter(dir == "from" & model == "E_sad"))$max == 0) {
+#     cat('The middle panel below shows how your targets influence your loneliness ("from"). For you, we see that after you were lonely, you reported less ', tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "from"))$Facet), '.', '\n\n  ', sep = "")  
+#   } else {
+#     cat('The middle panel below shows how your targets influence your loneliness ("from"). For you, we see that after you were lonely, your later behavior did not change. ', '\n\n  ', sep = "")
+#   }
+# }
+# 
+# ##### procrastination "from"
+# if (condition == "Procrastination"){
+#   if((var %>% filter(dir == "from" & model == "AnxSWk"))$sd != 0 & 
+#      (var %>% filter(dir == "from" & model == "AnxSWk"))$min != 0 & 
+#      (var %>% filter(dir == "from" & model == "AnxSWk"))$max != 0){
+#   cat('The middle panel below shows how your targets influence your procrastination ("from"). We see that after you procrastinate, you reported more ', tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "from"))$Facet), ' and less ', tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "from"))$Facet),  '.  \n\n', sep = "")  
+#   } else if((var %>% filter(dir == "from" & model == "AnxSWk"))$sd != 0 & 
+#             (var %>% filter(dir == "from" & model == "AnxSWk"))$min == 0) {
+#     cat('The middle panel below shows how your targets influence your procrastination ("from"). We see that after you procrastinate, you reported more ', tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "from"))$Facet),'.  \n\n', sep = "")  
+#   } else if((var %>% filter(dir == "from" & model == "AnxSWk"))$sd != 0 & 
+#             (var %>% filter(dir == "from" & model == "AnxSWk"))$max == 0) {
+#     cat('The middle panel below shows how your targets influence your procrastination ("from"). We see that after you procrastinate, you reported less ', tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "from"))$Facet),'.  \n\n', sep = "")  
+#   } else {
+#     cat('The middle panel below shows how your targets influence your procrastination ("from"). We see that after you procrastinated, your later behavior did not change.', '\n\n  ', sep = "")
+#   }
+# }
+# 
+# ##### loneliness "to"
+# if (condition == "Loneliness"){
+#   cat('The right panel shows how your other behaviors influence your loneliness ("to").', '\n\n  ', sep = "")
+#   if((var %>% filter(dir == "to" & model == "E_sad"))$sd != 0 & 
+#      (var %>% filter(dir == "to" & model == "E_sad"))$min != 0 & 
+#      (var %>% filter(dir == "to" & model == "E_sad"))$max != 0){
+#     cat('For you, we see that you reported more ', tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "from"))$Facet), ' and less ', tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "from"))$Facet),' before you reported being lonely.  ', '\n\n  ', sep = "")
+#   } else if ((var %>% filter(dir == "to" & model == "E_sad"))$sd != 0 & 
+#              (var %>% filter(dir == "to" & model == "E_sad"))$min != 0){
+#     cat('For you, we see that you reported more ', tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "from"))$Facet), ' before you reported being lonely.  ', '\n\n  ', sep = "")
+#   } else if ((var %>% filter(dir == "to" & model == "E_sad"))$sd != 0 & 
+#              (var %>% filter(dir == "to" & model == "E_sad"))$max != 0){
+#     cat('For you, we see that you reported less ', tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "from"))$Facet), ' before you reported being lonely.  ', '\n\n  ', sep = "")
+#   } else{
+#     cat('For you, we see that your earlier behaviors did not predict your loneliness. ', '\n\n  ', sep = "")
+#   }
+# }
+# 
+# ##### procrastination "to"
+# if (condition == "Procrastination"){
+# cat('The right panel shows how your other behaviors influence your procrastination ("to").', '\n\n  ', sep = "")
+# if((var %>% filter(dir == "to" & model == "AnxSWk"))$sd != 0 & 
+#    (var %>% filter(dir == "to" & model == "AnxSWk"))$min != 0 & 
+#    (var %>% filter(dir == "to" & model == "AnxSWk"))$max != 0){
+#   cat('We see that you reported more ', tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "to"))$Facet), ' and less ', tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "to"))$Facet), ' before you reported procrastinating.  ', '\n\n  ', sep = "")
+# } else if ((var %>% filter(dir == "to" & model == "AnxSWk"))$sd != 0 & 
+#            (var %>% filter(dir == "to" & model == "AnxSWk"))$min != 0){
+#   cat('We see that you reported more ', tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "to"))$Facet), ' before you reported procrastinating.  ', '\n\n  ', sep = "")
+# } else if ((var %>% filter(dir == "to" & model == "AnxSWk"))$sd != 0 & 
+#            (var %>% filter(dir == "to" & model == "AnxSWk"))$max != 0){
+#   cat('We see that you reported less ', tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "to"))$Facet), ' before you reported procrastinating.  ', '\n\n  ', sep = "")
+# } else{
+#   cat('We see that your earlier behaviors did not predict your procrastination. ', '\n\n  ', sep = "")
+# }
+# }
+```
+<!--
+The chart below is meant to help you understand patterns in your behaviors. We are going to talk about three different times of patterns and how they relate to procrastination and loneliness. Below, there is a description of each, moving from left to right:  
+
+1. **Concurrent:** Concurrent patterns mean that two things happen at the same time. This could mean that you are anxious *while* you are procrastinating or sad *while* you are lonely. These are important because they help us to identify things that we experience at the same time, which we often are not aware of. For you, we see that you are more lonely when you reported more `r tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "both"))$Facet)` and less lonely when you reported more `r tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "both"))$Facet)`. You also procrastinated more when you reported more `r tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "both"))$Facet)` and procrastinated less when you reported more `r tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "both"))$Facet)`.    
+
+2. **Contngent:** Contingent patterns mean that one thing tends to follow something else. For example, you might feel more anxious a couple of hours after procrastinating on something. This helps us to recgonize how our targets might influence our behavior. The opposite is also true, so this also helps us to see how our behaviors influence our targets.  
+
+The middle panel below shows how your targets influence your behavior ("from"). For you, we see that after you were lonely, you reported more `r tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "from"))$Facet)` and less `r tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "from"))$Facet)`. We also see that after you procrastinate, you reported more `r tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "from"))$Facet)` and less `r tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "from"))$Facet)`.  
+
+The right panel shows how your other behaviors influence the target behavior ("to"). For you, we see that you reported more `r tolower((summ %>% filter(model == "E_sad" & max == 1 & dir == "from"))$Facet)` and less `r tolower((summ %>% filter(model == "E_sad" & min == 1 & dir == "from"))$Facet)` before you reported being lonely. We also see that you reported more `r tolower((summ %>% filter(model == "AnxSWk" & max == 1 & dir == "from"))$Facet)` and less `r tolower((summ %>% filter(model == "AnxSWk" & min == 1 & dir == "from"))$Facet)` before you reported procrastinating.  -->
+
+
+Row 
+-----------------------------------------------------------------------
+
+### `r condition`-`r val_boxes$facet[1]` Link  
+```{r, results = 'asis'}
+e <- round(val_boxes$weight[1],2)
+valueBox(e, icon = "fa-pencil", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### `r condition`-`r val_boxes$facet[2]` Link  
+```{r, results = 'asis'}
+e <- round(val_boxes$weight[2],2)
+valueBox(e, icon = "fa-user", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### `r condition`-`r val_boxes$facet[3]` Link  
+```{r, results = 'asis'}
+e <- round(val_boxes$weight[3],2)
+valueBox(e, icon = "fa-pencil", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### `r condition`-`r val_boxes$facet[4]` Link  
+```{r, results = 'asis'}
+e <- round(val_boxes$weight[4],2)
+valueBox(e, icon = "fa-user", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+
+
+Your Personalized Strategies {data-orientation=rows}
+=======================================================================
+
+Row 
+-----------------------------------------------------------------------
+
+### Procrastination-Organization "While" Link
+```{r, results = 'asis'}
+e <- round((cont.edge %>% filter(dir == "both" & model == "AnxSWk" & facet == "Org"))$weight,2)
+valueBox(e, icon = "fa-pencil", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### <strong>Loneliness-Emotional Volatility "While" Link</strong>  
+```{r, results = 'asis'}
+e <- round((cont.edge %>% filter(dir == "both" & model == "E_sad" & facet == "EmoVol"))$weight,2)
+valueBox(e, icon = "fa-user", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### <strong>Procrastination --> Organization "from" Link</strong>  
+```{r, results = 'asis'}
+e <- round((cont.edge %>% filter(dir == "from" & model == "AnxSWk" & facet == "Org"))$weight,2)
+valueBox(e, icon = "fa-pencil", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### <strong>Loneliness-->Emotional Volatility "from" Link</strong>  
+```{r, results = 'asis'}
+e <- round((cont.edge %>% filter(dir == "from" & model == "E_sad" & facet == "EmoVol"))$weight,2)
+valueBox(e, icon = "fa-user", 
+         color = ifelse(e < -.5, "danger", 
+                 ifelse(e < 0, "warning", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "info", "success")))))
+```
+
+### <strong>Procrastination <-- Organization "to" Link</strong>  
+```{r, results = 'asis'}
+e <- round((cont.edge %>% filter(dir == "to" & model == "AnxSWk" & facet == "Org"))$weight,2)
+valueBox(e, icon = "fa-pencil", 
+         color = ifelse(e < -.5, "success", 
+                 ifelse(e < 0, "info", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "warning", "danger")))))
+```
+
+### <strong>Loneliness <-- Emotional Volatility "to" Link</strong>  
+```{r, results = 'asis'}
+e <- round((cont.edge %>% filter(dir == "to" & model == "E_sad" & facet == "EmoVol"))$weight,2)
+valueBox(e, icon = "fa-user", 
+         color = ifelse(e < -.5, "danger", 
+                 ifelse(e < 0, "warning", 
+                 ifelse(e == 0, "grey",
+                 ifelse(e < .5, "info", "success")))))
+```
+
+Row 
+-----------------------------------------------------------------------
+
+### <span style="font-size:1.75em;">Strategies</span>   
+
+Below, we give you a set of strategies to use based on the relationship between your behaviors and `r condition`. Refer back to these often for inspiration about to tackle `r condition` in your life.  
+
+```{r, results = 'asis'}
+file <- "~/Box Sync/network/other projects/interventions study/intervention_strategies.xlsx"
+# shrt_cnd <- ifelse(condition == "Procrastination", "Prcrst", "lonely")
+shrt_cnd <- ifelse(condition == "Procrastination", "AnxSWk", "E_sad")
+intro <- readxl::read_xlsx(file, sheet = "intro") %>%
+  filter(model == shrt_cnd)
+strat <- readxl::read_xlsx(file, sheet = "strategies") %>%
+  filter(model == shrt_cnd & use == "Yes")
+
+summ <- unique(cont.edge %>%
+  left_join(strat %>% 
+    select(model, type, dir, long_facet, facet, category, strat_name, description, strategy, use)) %>%
+  filter(weight != 0 & use == "Yes") %>%
+  group_by(type, dir, model) %>%
+  mutate(max = dense_rank(desc(abs(weight)))) %>%
+    filter(max %in% 1:4) %>%
+  #filter(weight == max(abs(weight[weight != 0]), na.rm = T) | weight == min(abs(weight[weight != 0]), na.rm = T)) %>%
+  left_join(codebook %>% filter(type == "BFI-2") %>%
+              select(shrtFacet, Facet, Trait) %>%
+              separate(shrtFacet, c("t", "facet")) %>%
+              rename(trait = Trait)))  %>%
+  ungroup()
+
+if(condition == "Procrastination"){
+  if((var %>% filter(type == "Contemporaneous" & model == "AnxSWk"))$sd == 0){
+    # need some text to deal with the fact that there seem to be no contemporaneous 
+    # strategies. The only way this would be true would be if there was something
+    # wrong with the model
+    cat('neither\n\n', "  ", sep = "")
+  } else { # then the case where this is at least one conditionally dependent variable
+    # we'll give them strategies for their top 2 connections, positive or negative?
+      nstrat <- nrow(strat)
+      ncat <- length(unique(summ$category))
+      categ <- unique(summ$category)
+      summ <- summ %>% arrange(category)
+      temp <- unique(summ %>% select(strat_name, category, strategy, description))
+      for (x in 1:ncat){
+        cat('Row \n-----------------------------------------------------------------------\n', sep = "")
+        cat('### <span style="font-size:1.75em;"><strong> ', categ[[x]], '</strong></span><br><br>\n', 
+            (intro %>% filter(category == categ[[x]]))$intro, "\n", "\n\n  ", sep = "")
+        strats <- (summ %>% filter(category == categ[[x]]))$strat_name
+        print(strat %>% filter(type == "Contemporaneous" & category == categ[[x]] & strat_name %in% strats) %>%
+          select(strategy, description) %>%
+          kable(., "html", col.names = c("Strategy", "Description")) %>%
+          kable_styling(bootstrap_options = c("striped","repeat_header")) %>%
+          column_spec(1, color = "blue", bold = T, width = "30em") %>%
+          column_spec(2, width = "60em"))
+      }
+    }
+} else {
+if((var %>% filter(type == "Contemporaneous" & model != "AnxSWk"))$sd == 0){
+    # need some text to deal with the fact that there seem to be no contemporaneous 
+    # strategies. The only way this would be true would be if there was something
+    # wrong with the model
+    cat('neither\n\n', "  ", sep = "")
+  } else { # then the case where this is at least one conditionally dependent variable
+    # we'll give them strategies for their top 2 connections, positive or negative?
+      nstrat <- nrow(strat)
+      ncat <- length(unique(summ$category))
+      categ <- unique(summ$category)
+      summ <- summ %>% arrange(category)
+      temp <- unique(summ %>% select(strat_name, category, strategy, description))
+      for (x in 1:ncat){
+        cat('Row \n-----------------------------------------------------------------------\n', sep = "")
+        cat('### <span style="font-size:1.75em;"><strong>Social ', categ[[x]], '</strong></span><br><br>\n', 
+            (intro %>% filter(category == categ[[x]]))$intro, "\n", "\n\n  ", sep = "")
+        strats <- (summ %>% filter(category == categ[[x]]))$strat_name
+        print(strat %>% filter(type == "Contemporaneous" & category == categ[[x]] & strat_name %in% strats) %>%
+          select(strategy, description) %>%
+          kable(., "html", col.names = c("Strategy", "Description")) %>%
+          kable_styling(bootstrap_options = c("striped","repeat_header")) %>%
+          column_spec(1, color = "blue", bold = T, width = "30em") %>%
+          column_spec(2, width = "60em"))
+      }
+    }
+}
+
+
+
+```
+
+

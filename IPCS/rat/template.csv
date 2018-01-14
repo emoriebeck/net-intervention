@@ -1,0 +1,313 @@
+num,item,answer,used
+1,cottage / swiss / cake,cheese,used
+49,"cross / rain / tie ","bow ",used
+100,"mail / board / lung ","black ",used
+2,cream / skate / water,ice,used
+50,"sage / paint / hair ","brush ",used
+101,"teeth / arrest / start ","false ",used
+3,loser / throat / spot,sore,used
+51,"french / car / shoe ","horn ",used
+102,"iron / shovel / engine ","steam ",used
+4,show / life / row,boat,used
+52,"boot / summer / ground ","camp ",used
+103,"wet / law / business ","suit ",used
+5,night / wrist / stop,watch,used
+53,"chamber / mask / natural ","gas ",used
+104,"rope / truck / line ","tow ",used
+6,duck / fold / dollar,bill,used
+54,"mill / tooth / dust ","saw ",used
+105,"off / military / first ","base ",used
+7,rocking / wheel / high,chair,used
+55,"main / sweeper / light ","street ",used
+106,"spoon / cloth / card ","table ",used
+8,dew / comb / bee,honey,used
+56,"pike / coat  / signal ","turn ",used
+107,"cut / cream / war ","cold ",used
+9,fountain / baking / pop,soda,used
+57,"office / mail / hat ","box ",used
+108,"note / chain / master ","key ",used
+10,preserve / ranger / tropical,forest,used
+58,"fly / clip / wall ","paper ",used
+109,"shock / shave / taste ","after ",used
+11,aid / rubber / wagon,band,used
+59,"age / mile / sand ","stone ",used
+110,"wise / work / tower ","clock ",used
+12,flake / mobile / cone,snow,used
+60,"catcher / food / hot ","dog ",used
+111,"grass / king / meat ","crab ",used
+13,cracker / fly / fighter,fire,used
+61,"wagon / break / radio ","station ",used
+112,"baby / spring / cap ","shower ",used
+14,safety / cushion / point,pin,used
+62,"tank / hill / secret ","top ",used
+113,"break / bean / cake ","coffee ",used
+15,cane / daddy / plum,sugar,used
+63,"health / taker / less ","care ",used
+114,"cry / front / ship ","battle ",used
+16,dream / break / light,day,used
+64,"lift  / card  / mask ","face ",used
+115,"hold / print / stool ","foot ",used
+17,fish / mine / rush,gold,used
+65,"dress / dial / flower ","sun ",used
+116,"roll / bean / fish ","jelly ",used
+18,political / surprise / line,party,used
+66,"force / line / mail ","air ",used
+117,"horse / human / drag ","race ",used
+19,measure / worm / video,tape,used
+67,guy / rain / down,"fall ",used
+118,"oil / bar / tuna ","salad ",used
+20,high / district / house,school/court,used
+68,"eight  / skate / stick ","figure ",used
+119,"bottom / curve / hop ","bell ",used
+21,sense / courtesy / place,common,used
+69,"down / question / check ","mark ",used
+120,"tomato / bomb / picker ","cherry ",used
+22,worm / shelf / end,book,used
+70,"animal / back / rat ","pack ",used
+121,"pea  / shell / chest ","nut ",used
+23,piece / mind / dating,game,used
+71,"officer / cash / larceny ","petty ",used
+122,"line / fruit / drunk ","punch ",used
+24,flower / friend / scout,girl,used
+72,"pine / crab / sauce ",apple,used
+123,"bump / egg / step ","goose ",used
+25,river / note / account,bank,used
+73,"house / thumb / pepper ","green ",used
+124,"fight / control / machine ","gun ",used
+26,print / berry / bird,blue,
+74,"carpet  / alert  / ink ","red ",
+125,"home / arm / room ","rest ",
+27,pie / luck / belly,pot,
+75,"master / toss / finger ","ring ",
+126,"child / scan / wash ","brain ",
+28,date / alley / fold,blind,
+76,"hammer / gear / hunter ","head ",
+127,"nose / stone / bear ","brown ",
+29,opera / hand / dish,soap,
+77,"knife / light / pal ","pen ",
+128,"end / line / lock ","dead ",
+30,cadet / capsule / ship,space,
+78,"foul / ground / mate ","play ",
+129,"control / place / rate ","birth ",
+31,fur / rack / tail,coat,
+79,"change / circuit / cake ","short ",
+130,"lounge / hour / napkin ","cocktail ",
+32,stick / maker / point,match,
+80,"way / board / sleep ","walk ",
+131,"artist  / hatch / route ","escape ",
+33,hound / pressure / shot,blood,
+81,"blank / list / mate ","check ",
+132,"pet / bottom / garden ","rock ",
+34,"fox / man / peep ","hole ",
+82,"tail / water / flood ","gate ",
+133,"mate / shoes / total ","running ",
+35,"sleeping / bean / trash ","bag ",
+83,"marshal / child / piano ","grand ",
+134,"self / attorney / spending ","defense ",
+36,"dust / cereal / fish ","bowl ",
+84,"cover / arm / wear ","under ",
+135,"board / blade / back ","switch 1 ",
+37,"light / birthday / stick ","candle ",
+85,"rain / test / stomach ","acid ",
+136,"land / hand / house ","farm ",
+38,"food / forward / break ","fast ",
+86,"time / blown / nelson ","full ",
+137,"hungry / order / belt ","money ",
+39,"shine / beam / struck ","moon ",
+87,"pile / market / room ","stock ",
+138,"forward / flush / razor ","straight ",
+40,"peach / arm / tar ","pit ",
+88,"mouse / bear / sand ","trap ",
+139,"shadow / chart  / drop ","eye ",
+41,"water / mine / shaker ","salt ",
+89,cat  / number / phone,"call ",
+140,"way / ground / weather ","fair ",
+42,"palm / shoe / house ","tree ",
+90,"keg / puff / room ","powder ",
+141,"cast / side / jump ","broad ",
+43,"basket / eight / snow ","ball ",
+91,"trip / house / goal ","field ",
+142,"back / step / screen ","door ",
+44,"wheel / hand / shopping ","cart ",
+92,"fork / dark / man ","pitch ",
+143,"reading / service / stick ","lip ",
+45,"right / cat / carbon ","copy ",
+93,"fence / card / master ","post ",
+144,"over / plant / horse ",power,
+46,"home / sea / bed ","sick ",
+94,"test / runner / map ","road ",
+47,"nuclear / feud / album ","family ",
+95,"dive / light / rocket ","sky ",
+48,"sandwich / house / golf ","club ",
+96,"man / glue / star ",super,
+97,"tooth / potato / heart ",sweet,
+98,"illness / bus / computer ","terminal ",
+99,"type / ghost / screen ","writer ",
+145,falling / actor / dust,star,
+200,cracker / union / rabbit,jack,
+255,chocolate / fortune / tin,cookie,
+146,broken / clear / eye,glass,
+201,bald / screech / emblem,eagle,
+256,color / numbers / oil,paint,
+147,skunk / kings / boiled,cabbage,
+202,blood / music / cheese,blue,
+257,mouse / sharp / blue,cheese,
+148,trap / polar / claw,bear,
+203,manners / round / tennis,table,
+258,sandwich / golf / foot,club,
+149,cinder / building / buster,block,
+204,off / trumpet / atomic,blast,
+259,silk / cream / even,smooth,
+150,thorn / whack / rose,bush,
+205,playing / credit / report,card,
+260,speak / money / street,easy,
+151,scan / nap / burglar,cat,
+206,rabbit / cloud / house,white,
+261,big / leaf / shade,tree,
+152,pain / serial / whale,killer,
+207,room / blood / salts,bath,
+262,envy / golf / beans,green,
+153,flag / vault / fishing,pole,
+208,salt / deep / foam,sea,
+263,hall / car / swimming,pool,
+154,dollar / stop / language,sign,
+209,square / cardboard / open,box,
+264,ink / herring / neck,red,
+155,set / program / cable,television,
+210,water / tobacco / stove,pipe,
+265,measure / desk / scotch,tape,
+156,cottage / brick / cake,cheese,
+211,ache / hunter / cabbage,head,
+266,strike / same / tennis,match,
+157,widow / bite / monkey,spider,
+212,chamber / staff / box,music,
+267,athletes / web / rabbit,foot,
+158,bass / complex / sleep,deep,
+213,high / book / sour,note,
+268,board / magic / death,black,
+159,coin / quick / spoon,silver,
+214,lick / sprinkle / mines,salt,
+269,lapse / vivid / elephant,memory,
+160,gold / stool / tender,bar,
+215,pure / blue / fall,water,
+270,puss / tart / spoiled,sour,
+161,time / hair / stretch,long,
+216,snack / line / birthday,party,
+271,rock / times / steel,hard,
+162,garbage / beer / paint,can,
+217,square / telephone / club,book,
+272,stop / petty / sneak,thief,
+163,trap / back / screen,door,
+218,surprise / wrap / care,gift,
+273,thread / pine / pain,needle,
+164,glass / rush / happy,hour,
+219,ticket / shop / broker,pawn,
+274,zone / still / noise,quiet,
+165,floor / shade / heat,lamp,
+220,barrel / root / belly,beer,
+275,cloth / sad / out,sack,
+166,puppy / TRUE / letter,love,
+221,blade / witted / weary,dull,
+276,cotton / bathtub / tonic,gin,
+167,polish / finger / down,nail,
+222,cherry / time / smell,blossom,
+277,foot / collection / out,stamp,
+168,hard / drift / cutter,wood,
+223,notch / flight / spin,top,
+278,inch / deal / peg,square,
+169,shelf / read / end,book,
+224,strap / pocket / time,watch,
+279,jump / kill / bliss,joy,
+170,sea / home / stomach,sick,
+225,walker / main / sweeper,street,
+280,magic / plush / floor,carpet,
+171,car / swimming / cue,pool,
+226,wicked / bustle / slicker,city,
+281,note / dive / chair,high,
+172,cookies / sixteen / heart,sweet,
+227,waffle / lung / tire,iron,
+282,stalk / trainer / king,lion,
+173,lounge / hour / drink,cocktail,
+228,poison / league / creeping,ivy,
+283,bump / throat / sum,lump,
+174,keel / show / row,boat,
+229,skirts / take / put,out,
+284,shopping / washer / picture,window,
+175,head / street / dark,light,
+230,quick / spoon / screen,silver,
+285,blank / white / lines,paper,
+176,surprise / line / birthday,party,
+231,ruby / glass / bunny,slipper,
+286,stick / light / birthday,candle,
+177,red / go / car,stop,
+232,demon / limit / way,speed,
+287,house / blanket / ball,beach,
+178,call / pay / line,phone,
+233,food / front / drug,store,
+288,line / patrol / town,border,
+179,end / burning / blue,book,
+234,noise / collar / wash,white,
+289,through / disk / way,drive,
+180,man / hot / sure,fire,
+235,bay / picture / washer,window,
+290,tax / real / fourth,estate,
+181,stick / pal / ball,pin,
+236,out / band / night,watch,
+291,life / color / coast,guard,
+182,blue / cake / cottage,cheese,
+237,cool / house / fat,cat,
+292,wave / lamp / dry,heat,
+183,man / wheel / high,chair,
+238,back / go / light,stop,
+293,bedroom / plan / brew,master,
+184,motion / poke / down,slow,
+239,man / order / air,mail,
+294,mouth / bike / oil,motor,
+185,line / birthday / surprise,party,
+240,bath / up / burst,bubble,
+295,sake / pet / nick,name,
+186,wood / liquor / luck,hard,
+241,ball / out / blue,black,
+296,due / life / tense,past,
+187,house / village / golf,green,
+242,up / around / rear,end,
+297,tomato / cement / tooth,paste,
+188,plan / show / walker,floor,
+243,stick / hair / ball,pin,
+298,release / french / secretary,press,
+189,key / wall / previous,stone,
+244,stool / powder / ball,foot,
+299,gap / door / sign,stop,
+190,bell / iron / tender,bar,
+245,key / wall / precious,stone,
+300,property / moral / price,value,
+191,water / youth / soda,fountain,
+246,water / pen / soda,fountain,
+301,rag / milk / out,weed,
+192,base / snow / dance,ball,
+247,steady / cart / slow,go,
+302,desert / ice / spell,dry,
+193,stop / kart / slow,go,
+248,tin / write / my,type,
+303,base / show / dance,ball,
+194,up / book / charge,cover,
+249,weight / pipe / pencil,lead,
+304,soap / shoe / tissue,box,
+195,tin / writer / my,type,
+250,sharp / thumb / tie,tack,
+305,hot / butterflies / pump,stomach,
+196,leg / arm / person,chair,
+251,back / short / light,stop,
+306,room / saturday / salts,bath,
+197,weight / out / pencil,lead,
+252,bath / up / gum,bubble,
+307,sore / shoulder / sweat,cold,
+198,spin / tip / shape,top,
+253,ball / out / jack,black,
+308,computer / cable / broadcast,network,
+199,sharp / tick / tie,tack,
+254,up / deep / rear,end,
+309,jury / door / side,panel,
+310,grand / door / bang,slam,
+311,dash / happy / stick,slap,
+312,chest / car / store,toy,

@@ -1,0 +1,2173 @@
+/*
+ * CSS for jsPsych experiments.
+ *
+ * This stylesheet provides minimal styling to make jsPsych
+ * experiments look polished without any additional styles.
+ */
+
+
+/* fonts and type */
+
+/*
+ * CSS for jsPsych experiments.
+ *
+ * This stylesheet provides minimal styling to make jsPsych
+ * experiments look polished without any additional styles.
+ */
+
+
+/* fonts and type */
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
+html {
+  font-family: 'Open Sans', 'Arial', sans-serif;
+  font-size: 18px;
+  line-height: 1.6em;
+}
+.table1{
+  background-color:#FAF0E6;
+  color:#002A5C;
+  border-bottom: 1em solid white; /* use the background colour of a cell here */
+}
+.cell1{
+  background-color:#FAF0E6;
+  color:#002A5C;
+  padding-top: -5px;
+  padding-left:20px;
+  margin:0;
+  width: 50%;
+}
+.cell2{
+  background-color:#FAF0E6;
+  color:#002A5C;
+  padding-top: -5px;
+  padding-left:20px;
+  margin:0;
+  width: 50%;
+}
+td.cbp{
+  background-color:#FAF0E6;
+  color:#002A5C;
+  padding-top: -5px;
+  padding-left:20px;
+  margin:0;
+  width: 50%;
+  text-align: right;
+}
+.cell4{
+  background-color:#FAF0E6;
+  color:#002A5C;
+  padding-top: -5px;
+  padding-left:20px;
+  margin:0;
+  width: 50%;
+  align: right;
+}
+.blank_row{
+    height: 20px !important; /* overwrites any other rules */
+    /*background-color: #778899 !important;*/
+}
+TR.separate-below TD,TR.separate-below TH {
+    border-bottom: 1em solid white; /* use the background colour of a cell here */
+}
+
+body {
+  background-color:#778899;
+  margin: 5px;
+  padding: 5px;
+  font-family:Helvetica, Arial, sans-serif;
+  text-align:center;
+  height:100%;
+  margin:5em;
+  width:100%;
+  color: #FFFFFF;
+}
+p {
+  clear: both;
+}
+.very-small {
+  font-size: 50%;
+}
+.small {
+  font-size: 75%;
+}
+.large {
+  font-size: 125%;
+}
+.very-large {
+  font-size: 150%;
+}
+
+/* Classes for changing location of things */
+
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.center-content {
+  text-align: center;
+}
+
+.block-center {
+  margin: 1em auto;
+  display: block;
+}
+/* Form elements like input fields and buttons */
+
+input[type="text"] {
+  font-family: 'Open Sans', 'Arial', sans-sefif;
+  font-size: 18px;
+}
+
+    .form-submit-button, .form-submit-reset, .form-submit-print, .form-screen-button {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+/* borrowing Bootstrap style for btn elements, but combining styles a bit */
+.jspsych-btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 0px 8px;
+  font-size: 14px;
+  margin-bottom:40px;
+  font-weight: 400;
+  font-family: 'Open Sans', 'Arial', sans-serif;
+  cursor: pointer;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #FFFFFF;
+  background-color: #002A5C;
+  border-color: #ccc;
+}
+
+.jspsych-btn:hover {
+  background-color: #ddd;
+  border-color: #aaa;
+}
+
+/* Container holding jsPsych content */
+
+.jspsych-display-element {
+  width: 800px;
+  margin: 50px auto 50px auto;
+  /*background-color:#002A5C;*/
+}
+
+/* jsPsych progress bar */
+
+#jspsych-progressbar-container {
+  color: #777;
+  border-bottom: 2px solid #dedede;
+  background-color: #f3f3f3;
+  margin-bottom: 1em;
+  text-align: center;
+  padding: 10px 0px;
+}
+#jspsych-progressbar-container s {}
+#jspsych-progressbar-outer {
+  background-color: #dedede;
+  border-radius: 5px;
+  padding: 1px;
+  width: 800px;
+  margin: auto;
+}
+#jspsych-progressbar-inner {
+  background-color: #aaa;
+  /* #3EB3D7; */
+  width: 0%;
+  height: 1em;
+  border-radius: 5px;
+}
+
+/* PLUGIN: jspsych-animation */
+
+#jspsych-animation-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-categorize-animation */
+
+#jspsych-categorize-animation-stimulus {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-categorize */
+
+#jspsych-categorize-stimulus {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.feedback {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-free-sort */
+
+#jspsych-free-sort-arena {
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid #444;
+}
+.jspsych-free-sort-draggable {
+  cursor: move;
+}
+#jspsych-free-sort-done-btn {
+  display: block;
+  margin: auto;
+  margin-top: 25px;
+}
+
+/* PLUGIN: jspsych-instructions */
+
+.jspsych-instructions-nav {
+  text-align: center;
+  margin-top: 2em;
+}
+.jspsych-instructions-nav button {
+  margin: 20px;
+}
+
+/* PLUGIN: jspsych-multi-stim-multi-response */
+
+#jspsych-multi-stim-multi-response-stimulus {
+  display: block;
+  margin: auto;
+}
+
+/* PLUGIN: jspsych-palmer */
+
+#jspsych-palmer-snapCanvas {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-same-different */
+
+.jspsych-same-different-stimulus {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-single-stim */
+
+#jspsych-single-stim-stimulus {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-survey-text */
+
+.jspsych-survey-text {
+  margin: 0.25em 0em;
+}
+.jspsych-survey-text-question {
+  margin: 2em 0em;
+}
+
+/* PLUGIN: jspsych-survey-text */
+
+.jspsych-survey-text {
+  margin: 0.25em 0em;
+}
+.jspsych-survey-text-question {
+  margin: 2em 0em;
+}
+
+/* PLUGIN: jspsych-survey-text-timed */
+
+#jspsych-survey-text-timed-stimulus {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 18px;
+  font-weight:bold;
+}
+
+
+.jspsych-survey-text-timed {
+  margin: 0.25em 0em;
+}
+.jspsych-survey-text-timed-question {
+  margin: 2em 0em;
+  font-size: 18px;
+  font-weight:bold;
+}
+
+
+/* PLUGIN: jspsych-survey-likert */
+
+.jspsych-survey-likert-statement {
+  display:block;
+  font-size: 18px;
+  font-weight:bold;
+  text-align:center;
+  color:#002A5C;
+  padding-top: 30px;
+  margin-bottom:10px;
+}
+.jspsych-survey-likert-opts {
+  list-style:none;
+  width:50%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 0 35px;
+  display:block-center;
+  font-size: 18px;
+  line-height:1.1em;
+}
+
+.jspsych-survey-likert-opt-label {
+  line-height: 1.1em;
+}
+
+.jspsych-survey-likert-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  /*left:9.5%;*/
+  display:block;
+  background-color:#efefef;
+  height:4px;
+  width:100%;
+}
+
+.jspsych-survey-likert-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-likert-opts li {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: top;
+}
+
+.jspsych-survey-likert-opts li input[type=radio] {
+  display:block;
+  position:relative;
+  height:2em;
+  top:0;
+  left:50%;
+  margin-left:-6px;
+}
+
+/* PLUGIN: jspsych-matrix-likert */
+
+.jspsych-survey-matrix-statement {
+  font-size: 18px;
+  font-weight:bold;
+  text-align:left;
+  vertical-align: middle;
+  color:#002A5C;
+  padding-top: 0px;
+}
+
+.jspsych-survey-matrix-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-matrix-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-matrix-opt-label {
+  line-height: 1.1em;
+  font-weight:bold;
+  vertical-align: middle;
+}
+
+.jspsych-survey-matrix-opts li {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-matrix-opts li input[type=radio] {
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  top:0;
+  height:2em;
+  left:50%;
+  margin-left:-6px;
+}
+
+
+.jspsych-survey-matrix-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+/* PLUGIN: jspsych-checkbox-likert */
+
+.jspsych-survey-checkbox-statement {
+  font-size: 18px;
+  font-weight:bold;
+  text-align:right;
+  vertical-align: middle;
+  color:#002A5C;
+  padding-top: 0px;
+}
+
+
+
+.jspsych-survey-checkbox-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-checkbox-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-checkbox-opt-label {
+  /*line-height: 1.1em;*/
+  font-weight:bold;
+  vertical-align: middle;
+}
+
+.jspsych-survey-checkbox-opts td {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-checkbox-opts td input[type=checkbox] {
+  text-align:right;
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  top:0;
+  /*height:4em;*/
+  left:50%;
+  margin-left:-6px;
+  transform: scale(1.5);
+}
+
+
+.jspsych-survey-checkbox-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  /*font-size: 18px;*/
+  /*line-height:1.1em;*/
+}
+/*
+ *
+ * PLUGIN: jspsych-survey-multi-choice
+ *
+ */
+
+.jspsych-survey-multi-choice-question {
+  margin-top: 2em;
+  margin-bottom: 2em;
+ }
+
+.jspsych-survey-multi-choice-text span.required {
+  color: darkred;
+}
+
+.jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-text {
+  text-align: center;
+}
+
+.jspsych-survey-multi-choice-option {
+  line-height: 2;
+}
+.jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-option {
+  display: inline-block;
+  margin-left: 1em;
+  margin-right: 1em;
+  vertical-align: top;
+}
+
+label.jspsych-survey-multi-choice-text input[type="radio"] {
+  margin-right: 1em;
+}
+
+#jspsych-survey-multi-choice-next {
+  display: block;
+  margin: auto;
+}
+
+/** PLUGIN: jspsych-visual-search-circle **/
+
+#jspsych-visual-search-circle-svg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* PLUGIN: jspsych-vsl-animate-occlusion */
+
+#jspsych-vsl-animate-occlusion-canvas {
+  display: block;
+  margin: auto;
+}
+
+/* PLUGIN: jspsych-xab */
+
+.jspsych-xab-stimulus {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/*
+ * CSS for jsPsych experiments.
+ *
+ * This stylesheet provides minimal styling to make jsPsych
+ * experiments look polished without any additional styles.
+ */
+
+
+/* fonts and type */
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
+@media handheld {
+    	html {
+		  -webkit-text-size-adjust: none;
+      -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      font-size: 14px;
+    }
+    body {
+      -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+      -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+      -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+      font-family:Helvetica, Arial, sans-serif;
+    	text-align:center;
+    	font-size:1.0625em;
+      height:100%;
+      margin:0em;
+      padding:0em;
+      width:100%;
+      background-color:#002A5C;
+  	  color: #FFFFFF;
+    }
+
+    .blank_row{
+        height: 20px !important; /* overwrites any other rules */
+        background-color: #002A5C !important;
+    }
+    .cell1{
+    background-color:#002A5C;
+    color:#002A5C;
+    padding-top: -5px;
+    padding-left:20px;
+    margin:0;
+    width: 50%;
+  }
+  .table1{
+    background-color:#002A5C;
+    color:#FAF0E6;
+    border-bottom: 1em solid white; /* use the background colour of a cell here */
+  }
+    p {
+      clear: both;
+    }
+    .very-small {
+      font-size: 50%;
+    }
+    .small {
+      font-size: 75%;
+    }
+    .large {
+      font-size: 125%;
+    }
+    .very-large {
+      font-size: 150%;
+    }
+
+    /* Classes for changing location of things */
+
+    .left {
+      float: left;
+    }
+    .right {
+      float: right;
+    }
+    .center-content {
+      text-align: center;
+    }
+
+    .block-center {
+      margin: 1em auto;
+      display: block;
+    }
+    /* Form elements like input fields and buttons */
+
+    input[type="text"] {
+      font-family: 'Open Sans', 'Arial', sans-sefif;
+      font-size: 18px;
+    }
+    
+    .form-submit-button, .form-submit-reset, .form-submit-print, .form-screen-button {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+
+    /* borrowing Bootstrap style for btn elements, but combining styles a bit */
+    .jspsych-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 0px 8px;
+      margin-bottom:40px;
+      font-size: 14px;
+      font-weight: 400;
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      cursor: pointer;
+      line-height: 1.4;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      background-image: none;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #FFFFFF;
+      background-color: #002A5C;
+      border-color: #ccc;
+    }
+
+    .jspsych-btn:hover {
+      background-color: #ddd;
+      border-color: #aaa;
+    }
+
+    /* Container holding jsPsych content */
+
+
+    .jspsych-display-element {
+      width: 90%;
+      margin: 2em auto 2em auto;
+    }
+
+    /* jsPsych progress bar */
+
+    #jspsych-progressbar-container {
+      color: #777;
+      border-bottom: 2px solid #dedede;
+      background-color: #f3f3f3;
+      margin-bottom: 1em;
+      text-align: center;
+      padding: 10px 0px;
+    }
+    #jspsych-progressbar-container s {}
+    #jspsych-progressbar-outer {
+      background-color: #dedede;
+      border-radius: 5px;
+      padding: 1px;
+      width: 90%;
+      margin: auto;
+    }
+    #jspsych-progressbar-inner {
+      background-color: #aaa;
+      /* #3EB3D7; */
+      width: 0%;
+      height: 1em;
+      border-radius: 5px;
+    }
+
+    /* PLUGIN: jspsych-animation */
+
+    #jspsych-animation-image {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-categorize-animation */
+
+    #jspsych-categorize-animation-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-categorize */
+
+    #jspsych-categorize-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .feedback {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-free-sort */
+
+    #jspsych-free-sort-arena {
+      margin-left: auto;
+      margin-right: auto;
+      border: 2px solid #444;
+    }
+    .jspsych-free-sort-draggable {
+      cursor: move;
+    }
+    #jspsych-free-sort-done-btn {
+      display: block;
+      margin: auto;
+      margin-top: 25px;
+    }
+
+    /* PLUGIN: jspsych-instructions */
+
+    .jspsych-instructions-nav {
+      text-align: center;
+      margin-top: 2em;
+    }
+    .jspsych-instructions-nav button {
+      margin: 20px;
+    }
+
+    /* PLUGIN: jspsych-multi-stim-multi-response */
+
+    #jspsych-multi-stim-multi-response-stimulus {
+      display: block;
+      margin: auto;
+    }
+
+    /* PLUGIN: jspsych-palmer */
+
+    #jspsych-palmer-snapCanvas {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-same-different */
+
+    .jspsych-same-different-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-single-stim */
+
+    #jspsych-single-stim-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-survey-text */
+
+    .jspsych-survey-text {
+      margin: 0.25em 0em;
+    }
+    .jspsych-survey-text-question {
+      margin: 2em 0em;
+    }
+    
+        /* PLUGIN: jspsych-survey-text */
+
+    .jspsych-survey-text-timed {
+      margin: 0.25em 0em;
+    }
+    .jspsych-survey-text-timed-question {
+      margin: 2em 0em;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* PLUGIN: jspsych-survey-likert */
+
+    .jspsych-survey-likert-statement {
+      display:block;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+    .jspsych-survey-likert-preamble {
+      display:block;
+      line-height: 22px;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+    .jspsych-survey-likert-opts {
+      list-style:none;
+      width:100%;
+      margin:0;
+      padding:0 0 35px;
+      display:block;
+      font-size: 14px;
+      line-height:1.1em;
+    }
+
+    .jspsych-survey-likert-opt-label {
+      line-height: 1.1em;
+    }
+
+    .jspsych-survey-likert-opts:before {
+      content: '';
+      position:relative;
+      top:11px;
+      /*left:9.5%;*/
+      display:block;
+      background-color:#efefef;
+      height:4px;
+      width:100%;
+    }
+
+    .jspsych-survey-likert-opts:last-of-type {
+      border-bottom: 0;
+    }
+
+    .jspsych-survey-likert-opts li {
+      display:inline-block;
+      /*width:19%;*/
+      text-align:center;
+      vertical-align: top;
+    }
+
+    .jspsych-survey-likert-opts li input[type=radio] {
+      display:block;
+      position:relative;
+      height:2em;
+      top:0;
+      left:50%;
+      margin-left:-6px;
+    }
+
+    /*
+     *
+     * PLUGIN: jspsych-survey-multi-choice
+     *
+     */
+
+    .jspsych-survey-multi-choice-question {
+      margin-top: 2em;
+      margin-bottom: 2em;
+     }
+
+    .jspsych-survey-multi-choice-text span.required {
+      color: darkred;
+    }
+
+    .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-text {
+      text-align: center;
+    }
+
+    .jspsych-survey-multi-choice-option {
+      line-height: 2;
+    }
+    .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-option {
+      display: inline-block;
+      margin-left: 1em;
+      margin-right: 1em;
+      vertical-align: top;
+    }
+
+    label.jspsych-survey-multi-choice-text input[type="radio"] {
+      margin-right: 1em;
+    }
+
+    #jspsych-survey-multi-choice-next {
+      display: block;
+      margin: auto;
+    }
+
+    /** PLUGIN: jspsych-visual-search-circle **/
+
+    #jspsych-visual-search-circle-svg {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-vsl-animate-occlusion */
+
+    #jspsych-vsl-animate-occlusion-canvas {
+      display: block;
+      margin: auto;
+    }
+
+    /* PLUGIN: jspsych-xab */
+
+    .jspsych-xab-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* PLUGIN: jspsych-matrix-likert */
+
+.jspsych-survey-matrix-statement {
+  font-size: 18px;
+  font-weight:bold;
+  text-align:right;
+  vertical-align: middle;
+  color:#002A5C;
+  padding-top: 0px;
+}
+    .jspsych-survey-matrix-preamble {
+      display:block;
+      line-height: 22px;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+
+
+.jspsych-survey-matrix-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-matrix-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-matrix-opts li {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-matrix-opts li input[type=radio] {
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  height:2em;
+  top:0;
+  left:50%;
+  margin-left:-6px;
+}
+
+
+.jspsych-survey-matrix-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+.jspsych-survey-checkbox-statement {
+  font-size: 18px;
+  /*font-weight:bold;*/
+  text-align:right;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 0px;
+}
+
+.jspsych-survey-checkbox-preamble {
+  line-height: 22px;
+      font-size: 18px;
+  font-weight:bold;
+  text-align:center;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 10px;
+}
+
+.jspsych-survey-checkbox-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-checkbox-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-checkbox-opt-label {
+  line-height: 1.1em;
+  font-weight:bold;
+  vertical-align: middle;
+}
+
+.jspsych-survey-checkbox-opts td {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-checkbox-opts td input[type=checkbox] {
+  text-align:right;
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  top:0;
+  /*height:2em;*/
+  left:50%;
+  margin-left:-6px;
+  transform: scale(1.5);
+}
+
+
+.jspsych-survey-checkbox-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+}
+
+/* iPhone-specific styles */
+@media only screen and (max-device-width: 1000) {
+
+	
+    	html {
+		  -webkit-text-size-adjust: none;
+      -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      font-size: 14px;
+    }
+    body {
+      -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+      -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+      -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+      font-family:Helvetica, Arial, sans-serif;
+    	text-align:center;
+    	font-size:1.0625em;
+      height:100%;
+      margin:0em;
+      padding:0em;
+      width:100%;
+      background-color:#002A5C;
+  	  color: #FFFFFF;
+    }
+
+    .blank_row{
+        height: 20px !important; /* overwrites any other rules */
+        background-color: #002A5C !important;
+    }
+    .cell1{
+    background-color:#002A5C;
+    color:#002A5C;
+    padding-top: -5px;
+    padding-left:20px;
+    margin:0;
+    width: 50%;
+  }
+  .table1{
+    background-color:#002A5C;
+    color:#FFFFFF;
+    border-bottom: 1em solid white; /* use the background colour of a cell here */
+  }
+    p {
+      clear: both;
+    }
+    .very-small {
+      font-size: 50%;
+    }
+    .small {
+      font-size: 75%;
+    }
+    .large {
+      font-size: 125%;
+    }
+    .very-large {
+      font-size: 150%;
+    }
+
+    /* Classes for changing location of things */
+
+    .left {
+      float: left;
+    }
+    .right {
+      float: right;
+    }
+    .center-content {
+      text-align: center;
+    }
+
+    .block-center {
+      margin: 1em auto;
+      display: block;
+    }
+    /* Form elements like input fields and buttons */
+
+    input[type="text"] {
+      font-family: 'Open Sans', 'Arial', sans-sefif;
+      font-size: 18px;
+    }
+
+    .form-submit-button, .form-submit-reset, .form-submit-print, .form-screen-button {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    
+    /* borrowing Bootstrap style for btn elements, but combining styles a bit */
+    .jspsych-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 0px 8px;
+      font-size: 14px;
+      margin-bottom:40px;
+      font-weight: 400;
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      cursor: pointer;
+      line-height: 1.4;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      background-image: none;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #FFFFFF;
+      background-color: #002A5C;
+      border-color: #ccc;
+    }
+
+    .jspsych-btn:hover {
+      background-color: #ddd;
+      border-color: #aaa;
+    }
+
+    /* Container holding jsPsych content */
+
+
+    .jspsych-display-element {
+      width: 90%;
+      margin: 2em auto 2em auto;
+    }
+
+    /* jsPsych progress bar */
+
+    #jspsych-progressbar-container {
+      color: #777;
+      border-bottom: 2px solid #dedede;
+      background-color: #f3f3f3;
+      margin-bottom: 1em;
+      text-align: center;
+      padding: 10px 0px;
+    }
+    #jspsych-progressbar-container s {}
+    #jspsych-progressbar-outer {
+      background-color: #dedede;
+      border-radius: 5px;
+      padding: 1px;
+      width: 90%;
+      margin: auto;
+    }
+    #jspsych-progressbar-inner {
+      background-color: #aaa;
+      /* #3EB3D7; */
+      width: 0%;
+      height: 1em;
+      border-radius: 5px;
+    }
+
+    /* PLUGIN: jspsych-animation */
+
+    #jspsych-animation-image {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-categorize-animation */
+
+    #jspsych-categorize-animation-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-categorize */
+
+    #jspsych-categorize-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .feedback {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-free-sort */
+
+    #jspsych-free-sort-arena {
+      margin-left: auto;
+      margin-right: auto;
+      border: 2px solid #444;
+    }
+    .jspsych-free-sort-draggable {
+      cursor: move;
+    }
+    #jspsych-free-sort-done-btn {
+      display: block;
+      margin: auto;
+      margin-top: 25px;
+    }
+
+    /* PLUGIN: jspsych-instructions */
+
+    .jspsych-instructions-nav {
+      text-align: center;
+      margin-top: 2em;
+    }
+    .jspsych-instructions-nav button {
+      margin: 20px;
+    }
+
+    /* PLUGIN: jspsych-multi-stim-multi-response */
+
+    #jspsych-multi-stim-multi-response-stimulus {
+      display: block;
+      margin: auto;
+    }
+
+    /* PLUGIN: jspsych-palmer */
+
+    #jspsych-palmer-snapCanvas {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-same-different */
+
+    .jspsych-same-different-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-single-stim */
+
+    #jspsych-single-stim-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-survey-text */
+
+    .jspsych-survey-text {
+      margin: 0.25em 0em;
+    }
+    .jspsych-survey-text-question {
+      margin: 2em 0em;
+    }
+    
+        /* PLUGIN: jspsych-survey-text */
+
+    .jspsych-survey-text-timed {
+      margin: 0.25em 0em;
+    }
+    .jspsych-survey-text-timed-question {
+      margin: 2em 0em;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* PLUGIN: jspsych-survey-likert */
+
+    .jspsych-survey-likert-statement {
+      display:block;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+    .jspsych-survey-likert-preamble {
+      display:block;
+      line-height: 22px;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+    .jspsych-survey-likert-opts {
+      list-style:none;
+      width:100%;
+      margin:0;
+      padding:0 0 35px;
+      display:block;
+      font-size: 14px;
+      line-height:1.1em;
+    }
+
+    .jspsych-survey-likert-opt-label {
+      line-height: 1.1em;
+    }
+
+    .jspsych-survey-likert-opts:before {
+      content: '';
+      position:relative;
+      top:11px;
+      /*left:9.5%;*/
+      display:block;
+      background-color:#efefef;
+      height:4px;
+      width:100%;
+    }
+
+    .jspsych-survey-likert-opts:last-of-type {
+      border-bottom: 0;
+    }
+
+    .jspsych-survey-likert-opts li {
+      display:inline-block;
+      /*width:19%;*/
+      text-align:center;
+      vertical-align: top;
+    }
+
+    .jspsych-survey-likert-opts li input[type=radio] {
+      display:block;
+      position:relative;
+      top:0;
+      height:2em;
+      left:50%;
+      margin-left:-6px;
+    }
+
+    /*
+     *
+     * PLUGIN: jspsych-survey-multi-choice
+     *
+     */
+
+    .jspsych-survey-multi-choice-question {
+      margin-top: 2em;
+      margin-bottom: 2em;
+     }
+
+    .jspsych-survey-multi-choice-text span.required {
+      color: darkred;
+    }
+
+    .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-text {
+      text-align: center;
+    }
+
+    .jspsych-survey-multi-choice-option {
+      line-height: 2;
+    }
+    .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-option {
+      display: inline-block;
+      margin-left: 1em;
+      margin-right: 1em;
+      vertical-align: top;
+    }
+
+    label.jspsych-survey-multi-choice-text input[type="radio"] {
+      margin-right: 1em;
+    }
+
+    #jspsych-survey-multi-choice-next {
+      display: block;
+      margin: auto;
+    }
+
+    /** PLUGIN: jspsych-visual-search-circle **/
+
+    #jspsych-visual-search-circle-svg {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-vsl-animate-occlusion */
+
+    #jspsych-vsl-animate-occlusion-canvas {
+      display: block;
+      margin: auto;
+    }
+
+    /* PLUGIN: jspsych-xab */
+
+    .jspsych-xab-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* PLUGIN: jspsych-matrix-likert */
+
+.jspsych-survey-matrix-statement {
+  font-size: 18px;
+  font-weight:bold;
+  text-align:right;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 0px;
+}
+
+    .jspsych-survey-matrix-preamble {
+      display:block;
+      line-height: 22px;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+
+.jspsych-survey-matrix-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-matrix-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-matrix-opts li {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-matrix-opts li input[type=radio] {
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  height:2em;
+  top:0;
+  left:50%;
+  margin-left:-6px;
+}
+
+
+.jspsych-survey-matrix-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+
+.jspsych-survey-matrix-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+.jspsych-survey-checkbox-statement {
+  font-size: 18px;
+  /*font-weight:bold;*/
+  text-align:right;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 0px;
+}
+
+.jspsych-survey-checkbox-preamble {
+  line-height: 22px;
+      font-size: 18px;
+  font-weight:bold;
+  text-align:center;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 10px;
+}
+
+.jspsych-survey-checkbox-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-checkbox-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-checkbox-opt-label {
+  line-height: 1.1em;
+  font-weight:bold;
+  vertical-align: middle;
+}
+
+.jspsych-survey-checkbox-opts td {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-checkbox-opts td input[type=checkbox] {
+  text-align:right;
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  top:0;
+  /*height:2em;*/
+  left:50%;
+  margin-left:-6px;
+  transform: scale(1.5);
+}
+
+
+.jspsych-survey-checkbox-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+    }
+
+
+/* iPhone-specific styles */
+@media only screen and (max-device-width: 1000px) {
+
+    	html {
+		  -webkit-text-size-adjust: none;
+      -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      font-size: 14px;
+    }
+    body {
+      -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+      -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+      -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+      font-family:Helvetica, Arial, sans-serif;
+    	text-align:center;
+    	font-size:1.0625em;
+      height:100%;
+      margin:0em;
+      padding:0em;
+      width:100%;
+      background-color:#002A5C;
+  	  color: #FFFFFF;
+    }
+
+    .blank_row{
+        height: 20px !important; /* overwrites any other rules */
+        background-color: #002A5C !important;
+    }
+    .cell1{
+    background-color:#002A5C;
+    color:#002A5C;
+    padding-top: -5px;
+    padding-left:20px;
+    margin:0;
+    width: 50%;
+  }
+  .table1{
+    background-color:#002A5C;
+    color:#FAF0E6;
+    border-bottom: 1em solid white; /* use the background colour of a cell here */
+  }
+    p {
+      clear: both;
+    }
+    .very-small {
+      font-size: 50%;
+    }
+    .small {
+      font-size: 75%;
+    }
+    .large {
+      font-size: 125%;
+    }
+    .very-large {
+      font-size: 150%;
+    }
+
+    /* Classes for changing location of things */
+
+    .left {
+      float: left;
+    }
+    .right {
+      float: right;
+    }
+    .center-content {
+      text-align: center;
+    }
+
+    .block-center {
+      margin: 1em auto;
+      display: block;
+    }
+    /* Form elements like input fields and buttons */
+
+    input[type="text"] {
+      font-family: 'Open Sans', 'Arial', sans-sefif;
+      font-size: 18px;
+    }
+
+    .form-submit-button, .form-submit-reset, .form-submit-print, .form-screen-button {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    
+    /* borrowing Bootstrap style for btn elements, but combining styles a bit */
+    .jspsych-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 0px 8px;
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom:40px;
+      font-family: 'Open Sans', 'Arial', sans-serif;
+      cursor: pointer;
+      line-height: 1.4;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      background-image: none;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #FFFFFF;
+      background-color: #002A5C;
+      border-color: #ccc;
+    }
+
+    .jspsych-btn:hover {
+      background-color: #ddd;
+      border-color: #aaa;
+    }
+
+    /* Container holding jsPsych content */
+
+
+    .jspsych-display-element {
+      width: 90%;
+      margin: 2em auto 2em auto;
+    }
+
+    /* jsPsych progress bar */
+
+    #jspsych-progressbar-container {
+      color: #777;
+      border-bottom: 2px solid #dedede;
+      background-color: #f3f3f3;
+      margin-bottom: 1em;
+      text-align: center;
+      padding: 10px 0px;
+    }
+    #jspsych-progressbar-container s {}
+    #jspsych-progressbar-outer {
+      background-color: #dedede;
+      border-radius: 5px;
+      padding: 1px;
+      width: 90%;
+      margin: auto;
+    }
+    #jspsych-progressbar-inner {
+      background-color: #aaa;
+      /* #3EB3D7; */
+      width: 0%;
+      height: 1em;
+      border-radius: 5px;
+    }
+
+    /* PLUGIN: jspsych-animation */
+
+    #jspsych-animation-image {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-categorize-animation */
+
+    #jspsych-categorize-animation-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-categorize */
+
+    #jspsych-categorize-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .feedback {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-free-sort */
+
+    #jspsych-free-sort-arena {
+      margin-left: auto;
+      margin-right: auto;
+      border: 2px solid #444;
+    }
+    .jspsych-free-sort-draggable {
+      cursor: move;
+    }
+    #jspsych-free-sort-done-btn {
+      display: block;
+      margin: auto;
+      margin-top: 25px;
+    }
+
+    /* PLUGIN: jspsych-instructions */
+
+    .jspsych-instructions-nav {
+      text-align: center;
+      margin-top: 2em;
+    }
+    .jspsych-instructions-nav button {
+      margin: 20px;
+    }
+
+    /* PLUGIN: jspsych-multi-stim-multi-response */
+
+    #jspsych-multi-stim-multi-response-stimulus {
+      display: block;
+      margin: auto;
+    }
+
+    /* PLUGIN: jspsych-palmer */
+
+    #jspsych-palmer-snapCanvas {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-same-different */
+
+    .jspsych-same-different-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-single-stim */
+
+    #jspsych-single-stim-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-survey-text */
+
+    .jspsych-survey-text {
+      margin: 0.25em 0em;
+    }
+    .jspsych-survey-text-question {
+      margin: 2em 0em;
+    }
+    
+        /* PLUGIN: jspsych-survey-text */
+
+    .jspsych-survey-text-timed {
+      margin: 0.25em 0em;
+    }
+    .jspsych-survey-text-timed-question {
+      margin: 2em 0em;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* PLUGIN: jspsych-survey-likert */
+
+    .jspsych-survey-likert-statement {
+      display:block;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+    .jspsych-survey-likert-preamble {
+      display:block;
+      line-height: 22px;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+    .jspsych-survey-likert-opts {
+      list-style:none;
+      width:100%;
+      margin:0;
+      padding:0 0 35px;
+      display:block;
+      font-size: 14px;
+      line-height:1.1em;
+    }
+
+    .jspsych-survey-likert-opt-label {
+      line-height: 1.1em;
+    }
+
+    .jspsych-survey-likert-opts:before {
+      content: '';
+      position:relative;
+      top:11px;
+      /*left:9.5%;*/
+      display:block;
+      background-color:#efefef;
+      height:4px;
+      width:100%;
+    }
+
+    .jspsych-survey-likert-opts:last-of-type {
+      border-bottom: 0;
+    }
+
+    .jspsych-survey-likert-opts li {
+      display:inline-block;
+      /*width:19%;*/
+      text-align:center;
+      vertical-align: top;
+    }
+
+    .jspsych-survey-likert-opts li input[type=radio] {
+      display:block;
+      position:relative;
+      top:0;
+      height:2em;
+      left:50%;
+      margin-left:-6px;
+    }
+
+    /*
+     *
+     * PLUGIN: jspsych-survey-multi-choice
+     *
+     */
+
+    .jspsych-survey-multi-choice-question {
+      margin-top: 2em;
+      margin-bottom: 2em;
+     }
+
+    .jspsych-survey-multi-choice-text span.required {
+      color: darkred;
+    }
+
+    .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-text {
+      text-align: center;
+    }
+
+    .jspsych-survey-multi-choice-option {
+      line-height: 2;
+    }
+    .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-option {
+      display: inline-block;
+      margin-left: 1em;
+      margin-right: 1em;
+      vertical-align: top;
+    }
+
+    label.jspsych-survey-multi-choice-text input[type="radio"] {
+      margin-right: 1em;
+    }
+
+    #jspsych-survey-multi-choice-next {
+      display: block;
+      margin: auto;
+    }
+
+    /** PLUGIN: jspsych-visual-search-circle **/
+
+    #jspsych-visual-search-circle-svg {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* PLUGIN: jspsych-vsl-animate-occlusion */
+
+    #jspsych-vsl-animate-occlusion-canvas {
+      display: block;
+      margin: auto;
+    }
+
+    /* PLUGIN: jspsych-xab */
+
+    .jspsych-xab-stimulus {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* PLUGIN: jspsych-matrix-likert */
+
+.jspsych-survey-matrix-statement {
+  font-size: 18px;
+  font-weight:bold;
+  text-align:right;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 0px;
+}
+    .jspsych-survey-matrix-preamble {
+      display:block;
+      line-height: 22px;
+      font-size: 18px;
+      font-weight:bold;
+      color:#FFFFFF;
+      padding-top: 30px;
+      margin-bottom:10px;
+    }
+
+
+.jspsych-survey-matrix-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-matrix-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-matrix-opts li {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-matrix-opts li input[type=radio] {
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  top:0;
+  left:50%;
+  margin-left:-6px;
+}
+
+
+.jspsych-survey-matrix-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+.jspsych-survey-matrix-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+.jspsych-survey-checkbox-statement {
+  font-size: 18px;
+  /*font-weight:bold;*/
+  text-align:right;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 0px;
+}
+
+.jspsych-survey-checkbox-preamble {
+  line-height: 22px;
+      font-size: 18px;
+  font-weight:bold;
+  text-align:center;
+  vertical-align: middle;
+  color:#FFFFFF;
+  padding-top: 10px;
+}
+
+.jspsych-survey-checkbox-opts:before {
+  content: '';
+  position:relative;
+  top:11px;
+  vertical-align: top;
+  /*left:9.5%;*/
+  vertical-align: middle;
+  display:block;
+  /*background-color:#efefef;*/
+  /*height:4px;*/
+  width:100%;
+}
+
+.jspsych-survey-checkbox-opts:last-of-type {
+  border-bottom: 0;
+}
+
+.jspsych-survey-checkbox-opt-label {
+  line-height: 1.1em;
+  font-weight:bold;
+  vertical-align: middle;
+}
+
+.jspsych-survey-checkbox-opts td {
+  display:inline-block;
+  /*width:19%;*/
+  text-align:center;
+  vertical-align: middle;
+  vertical-align: top;
+}
+
+.jspsych-survey-checkbox-opts td input[type=checkbox] {
+  text-align:right;
+  display:block;
+  position:relative;
+  vertical-align: middle;
+  top:0;
+  /*height:2em;*/
+  left:50%;
+  margin-left:-6px;
+  transform: scale(1.5);
+}
+
+
+.jspsych-survey-checkbox-opts {
+  list-style:none;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0 ;
+  vertical-align: middle;
+  display:block-center;
+  font-size: 18px;
+  /*line-height:1.1em;*/
+}
+
+    }
+
+
