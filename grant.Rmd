@@ -1,0 +1,67 @@
+---
+title: "Personalized Interventions: Using Networks to Change Behavior and Predict Outcomes"
+author: "Emorie D Beck"
+output:
+  html_document:
+    number_sections: yes
+    theme: united
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Abstract
+
+Personality predicts life outcomes like health and longevity, indicating that personality interventions could promote healthier lives. But few effective personality interventions exist. I contend that (1) this paucity reflects the exclusive focus on between-person measures that miss the nuances of personality and (2) that idiographic personality assessments are suited to creating personalized interventions. Using idiographic networks to identify person-specific intervention targets, I test whether individually tailored feedback outperforms broader feedback in changing procrastination and loneliness.  
+
+# Research question, goals of the study, significance to social/personality psychology (350 words)
+Researchers have linked personality to health and education, among other important outcomes. But personality psychologists emphasize that these are between person (nomothetic), not individual (idiographic) level patterns. Nomothetic approaches rely on mean level patterns of behavior. But focusing on general behavior obscures individual variation and the contextual nature of behavior. The result is that many researchers, educators, etcetera feel that nomothetic models of personality do not accurately describe a single, unique person. However, recent strides in network science have bridged nomothetic and individual level analyses. Networks provide tools for idiographic assessment of personality, which may improve the efficacy of interventions and the prediction of important outcomes.  
+
+Idiographic networks represent personality dimensions as a complex system of behaviors that are masked in nomothetic approaches. By offering insight into behavioral dynamics, networks suggest specific, rather than general, target behaviors. I have demonstrated that idiographic networks show considerable individual differences in structure and consistency (Beck & Jackson, 2018a)  that predict lower GPA in student populations (Beck & Jackson, 2018b).  
+
+Furthermore, evidence from Behavioral Activation (BA; Magidson et al., 2014) approaches in clinical domains suggest that repeating target behaviors intentionally over time leads to long-term cognitive-emotional change. In personality, my research demonstrates that state (behavior)- and trait-level changes correlate (Beck & Jackson, 2018c). Together, idiographic networks and BA suggest that techniques that "interrupt" behavioral connections provide more specific approaches for creating change and may lead to greater changes in outcomes. However, with a few exceptions (Beck & Jackson, 2017; Beck & Jackson, 2018a; Cheung, Beck, & Jackson, 2018), few studies have investigated person-centered networks of personality manifestations. And no work has examined the efficacy of networks in creating targeted interventions, either singly or relative to nomothetic approaches. Together, this dual approach should yield a more effective intervention on behavior.  
+
+## AIMS.  
+I will (1) assess the network structure of personality at three time points to investigate the stability of person-level processes, (2) use networks to improve in the prediction of important outcomes (compared to traditional between person approaches), and (3) use individual networks to create personalized interventions to better influence school behaviors.  
+
+# Research design and methodology (350 words)
+I aim to test how mean level personality and network measures respond to individualized feedback in sample of undergraduates. 50 observations from 100 participants are needed to detect a medium effect size (d = .50) difference with power of .80. Thus, undergraduates will complete experience sampling (ESM) surveys up to four times per day at three, two-week points (~60 assessments): pre-, post-, and delayed post-intervention. The ESM assessments will use a planned missing data design to collect responses to the 60-item BFI-2 (15 per observation) and other behaviors (e.g. procrastination, loneliness), emotions (e.g. happy), and situations (e.g. studying).  
+
+## PERSONALIZED FEEDBACK. 
+In a 2 (intervention type; network v. trait profile) x 2 (target behavior; procrastination v. loneliness) design, undergraduates will be given feedback based on their personality networks or traditional summary measures of their Big 5 personality profiles collected at the first assessment. The trait profile group will serve as a control. Target behaviors for intervention will be one of two behaviors selected for their relevance to college populations - loneliness (social) and procrastination (academic).  
+
+Once the target behavior has been identified (see Planned Analyses), participants will receive personalized personality reports (see github.com/emoriebeck/net-intervention for an example). These include a summary of their behaviors, emotions, and situations when they are or are not engaging in their target behavior as well as BA style suggestions for strategies to use when procrastinating or feeling lonely. For example, a participant who shows a strong, positive link between procrastination and anxiety will be directed to log distracting thoughts (e.g. Steel, 2007), while a participant who shows a strong, negative link will be directed to make a study plan with planned  study breaks.  
+
+## INTERVENTION. 
+For the 60 day intervention, participants will complete a daily diary study in which they strategize ways to target their focal trait (trait profile intervention) or behavior (network intervention) to meet their goals using the strategies provided in their personal feedback reports. Each day, they will receive text message reminders of their strategies, report their success with strategies, assess why these strategies worked, and plan strategies for the future. 
+
+# Planned analyses (350 words)
+## NETWORK ANALYSES. 
+For each phase, I will model the responses using graphical vector autoregressive models using the graphicalVAR package in R, construct individual-level networks, and calculate centrality - a measure of the relative importance of network node - to assess the network structure of personality in our sample (Aim 1). All analyses will be conducted in R and are available on GitHub and the Open Science Framework (OSF).  
+
+Before constructing the (N = 1) idiographic networks, we will use time series multiple imputation to impute missing data from the planned missing data design using the Amelia package in R. We will calculate centrality to determine the influence of procrastination and loneliness for each person. Thus, we will construct 2 networks for each subject. Each network will include the personality items and either the procrastination or loneliness target behavior.  
+## PERSONALIZED FEEDBACK. 
+To leverage an idiographic approach and target an outcome that greatly impacts participants' personalities, we will empirically assign participants to target procrastination or loneliness using statistical analyses of their responses. For each network, we will calculate the centrality of the target behavior (procrastination, loneliness) and assign participants to target whichever is more central in their personality networks.  
+
+Feedback reports will be based on a series of algorithms I have written to identify important behavioral patterns (network edges) that increase procrastination and loneliness. For example, a participant who is targeting procrastination will be told "You procrastinated more when you reported more [behavior]." The behavior will be the behavior that has the strongest, positive link with procrastination in that participants' network. This behavior will be cross-referenced with a list of strategies to target that specific pattern.  
+
+## ASSESSING CHANGE. 
+After participants complete post- and delayed post-intervention ESM assessments immediately or 6 months after the intervention, respectively, we will test our other hypotheses. I will separately regress centrality and nomothetic measures on semester grades and classroom (e.g. procrastination) and social behaviors (e.g. loneliness) to assess the predictive utility of the two approaches (Aim 2). In addition, I will test the impact of the intervention phase on participants' personality networks and Big 5 profiles (Aim 3). 
+
+# Itemized budget (350 words)
+Time              | Breakdown   
+----------------- | ----------------------------------------------------------
+Time 1 Assessment: | 100 subjects * 60 responses / subject * \$ 0.50 / response = \$3000
+Time 2 Assessment:  | 	 100 subjects * 60 responses / subject * \$ 0.50 / response = \$3000
+Time 3 Assessment:  | 100 subjects * 60 responses / subject * \$ 0.50 / response = \$3000
+Daily Diary Intervention:	| 100 subjects * 45 responses / subject * \$ 1.00 / response = \$4500
+"Bonus" Awards: |	$300
+**Total:**  | 	**$13,800**
+
